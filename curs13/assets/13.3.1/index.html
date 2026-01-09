@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>13.3.1 - Hit Rate și Miss Rate</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/lesson.css">
+</head>
+<body>
+    <article class="lesson-container">
+        <header class="lesson-header">
+            <span class="lesson-badge">Lecția 13.3.1</span>
+            <h1 class="lesson-title">Hit Rate și Miss Rate</h1>
+            <p class="lesson-subtitle">Metrici fundamentale pentru evaluarea performanței cache-ului</p>
+        </header>
+
+        <section class="section" id="introducere">
+            <h2 class="section-title">Metrici de Performanță</h2>
+            <p class="text-content">
+                Pentru a evalua eficiența unui sistem de cache, folosim mai multe metrici 
+                care cuantifică cât de bine reușește cache-ul să servească cererile procesorului 
+                fără a accesa memoria principală.
+            </p>
+            <figure class="figure">
+                <a href="../images/F74.png" target="_blank">
+                    <img src="../images/F74.png" alt="Transfer asincron cu un singur semnal" class="figure-img medium">
+                </a>
+                <figcaption class="figure-caption">
+                    <strong>Figura 7.4:</strong> Transfer asincron de date cu un singur semnal de control.
+                </figcaption>
+            </figure>
+        </section>
+
+        <section class="section" id="definitii">
+            <h2 class="section-title">Definiții Fundamentale</h2>
+
+            <div class="definition-box">
+                <p class="definition-label">Hit Rate (Rata de Hit)</p>
+                <p class="definition-text">
+                    <strong>Hit Rate</strong> = Numărul de accesuri găsite în cache / Numărul total de accesuri
+                    <br><br>
+                    Reprezintă fracțiunea din accesuri care sunt satisfăcute de cache fără a necesita 
+                    acces la memoria principală.
+                </p>
+            </div>
+
+            <div class="definition-box">
+                <p class="definition-label">Miss Rate (Rata de Miss)</p>
+                <p class="definition-text">
+                    <strong>Miss Rate</strong> = Numărul de accesuri care nu sunt în cache / Numărul total de accesuri
+                    <br><br>
+                    Miss Rate = 1 - Hit Rate
+                </p>
+            </div>
+
+            <div class="info-box info-blue">
+                <p class="info-title">📊 Exemplu Numeric</p>
+                <p>
+                    Dacă un program face 1,000,000 accesuri la memorie și 950,000 sunt găsite în cache:
+                </p>
+                <ul class="content-list">
+                    <li>Hit Rate = 950,000 / 1,000,000 = <strong>95%</strong></li>
+                    <li>Miss Rate = 50,000 / 1,000,000 = <strong>5%</strong></li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="section" id="timp-acces">
+            <h2 class="section-title">Timpul Mediu de Acces la Memorie</h2>
+            
+            <p class="text-content">
+                Metrica cea mai importantă pentru performanță este <strong>AMAT</strong> 
+                (Average Memory Access Time) - timpul mediu de acces la memorie:
+            </p>
+
+            <div class="code-block">
+<pre>AMAT = Hit Time + Miss Rate × Miss Penalty
+
+Unde:
+• Hit Time     = Timpul de acces la cache (când datele sunt găsite)
+• Miss Rate    = Probabilitatea unui miss
+• Miss Penalty = Timpul suplimentar pentru a aduce date din nivelul inferior</pre>
+            </div>
+
+            <div class="info-box">
+                <p class="info-title">📊 Exemplu Calcul AMAT</p>
+                <table class="data-table">
+                    <tr><td>Hit Time (L1)</td><td>1 ciclu</td></tr>
+                    <tr><td>Miss Rate (L1)</td><td>5%</td></tr>
+                    <tr><td>Miss Penalty (acces L2)</td><td>10 cicluri</td></tr>
+                </table>
+                <p>
+                    AMAT = 1 + 0.05 × 10 = 1 + 0.5 = <strong>1.5 cicluri</strong>
+                </p>
+                <p>
+                    Fără cache, fiecare acces ar dura ~100 cicluri. Cu cache, media este 1.5 cicluri!
+                </p>
+            </div>
+        </section>
+
+        <section class="section" id="multi-nivel">
+            <h2 class="section-title">AMAT pentru Cache Multi-Nivel</h2>
+            
+            <p class="text-content">
+                Sistemele moderne au mai multe niveluri de cache. Formula AMAT se extinde recursiv:
+            </p>
+
+            <div class="code-block">
+<pre>AMAT = Hit Time_L1 + Miss Rate_L1 × Miss Penalty_L1
+
+Unde Miss Penalty_L1 = Hit Time_L2 + Miss Rate_L2 × Miss Penalty_L2
+
+Expandând:
+AMAT = HT_L1 + MR_L1 × (HT_L2 + MR_L2 × (HT_L3 + MR_L3 × MP_RAM))</pre>
+            </div>
+
+            <div class="info-box info-blue">
+                <p class="info-title">📊 Exemplu Real</p>
+                <table class="data-table">
+                    <thead>
+                        <tr><th>Nivel</th><th>Hit Time</th><th>Miss Rate Local</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>L1</td><td>4 cicluri</td><td>5%</td></tr>
+                        <tr><td>L2</td><td>12 cicluri</td><td>20%</td></tr>
+                        <tr><td>L3</td><td>40 cicluri</td><td>30%</td></tr>
+                        <tr><td>RAM</td><td>200 cicluri</td><td>-</td></tr>
+                    </tbody>
+                </table>
+                <p>
+                    AMAT = 4 + 0.05 × (12 + 0.20 × (40 + 0.30 × 200))<br>
+                    AMAT = 4 + 0.05 × (12 + 0.20 × (40 + 60))<br>
+                    AMAT = 4 + 0.05 × (12 + 0.20 × 100)<br>
+                    AMAT = 4 + 0.05 × (12 + 20)<br>
+                    AMAT = 4 + 0.05 × 32 = 4 + 1.6 = <strong>5.6 cicluri</strong>
+                </p>
+            </div>
+        </section>
+
+        <section class="section" id="miss-rates">
+            <h2 class="section-title">Local vs Global Miss Rate</h2>
+            
+            <div class="card-grid">
+                <div class="info-card">
+                    <div class="card-icon">📍</div>
+                    <h3 class="card-title">Local Miss Rate</h3>
+                    <p class="card-text">
+                        Fracțiunea de accesuri la un nivel care rezultă în miss. 
+                        Se calculează relativ la accesurile care ajung la acel nivel.
+                        <br><br>
+                        <strong>Local MR_L2 = Miss-uri L2 / Accesuri L2</strong>
+                    </p>
+                </div>
+                <div class="info-card">
+                    <div class="card-icon">🌍</div>
+                    <h3 class="card-title">Global Miss Rate</h3>
+                    <p class="card-text">
+                        Fracțiunea din TOATE accesurile care rezultă în miss la un nivel. 
+                        Se calculează relativ la accesurile totale ale procesorului.
+                        <br><br>
+                        <strong>Global MR_L2 = Miss-uri L2 / Total accesuri CPU</strong>
+                    </p>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <p class="info-title">🔗 Relația între ele</p>
+                <p>
+                    Global Miss Rate_Ln = MR_L1 × MR_L2 × ... × MR_Ln (produs)
+                </p>
+                <p>
+                    Exemplu: Dacă L1 are 5% miss rate local și L2 are 20% miss rate local:
+                    <br>
+                    Global miss rate L2 = 0.05 × 0.20 = 0.01 = <strong>1%</strong>
+                </p>
+            </div>
+        </section>
+
+        <section class="section" id="valori-tipice">
+            <h2 class="section-title">Valori Tipice</h2>
+            
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Nivel Cache</th>
+                        <th>Hit Rate Tipic</th>
+                        <th>Hit Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>L1 Cache</td>
+                        <td>95-99%</td>
+                        <td>1-4 cicluri</td>
+                    </tr>
+                    <tr>
+                        <td>L2 Cache</td>
+                        <td>85-95% (local)</td>
+                        <td>10-20 cicluri</td>
+                    </tr>
+                    <tr>
+                        <td>L3 Cache</td>
+                        <td>70-90% (local)</td>
+                        <td>30-50 cicluri</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="info-box info-blue">
+                <p class="info-title">💡 Observație Importantă</p>
+                <p>
+                    Un hit rate de 95% pare excelent, dar un miss rate de 5% poate fi foarte 
+                    costisitor dacă miss penalty este mare. Pentru aplicații sensibile la latență, 
+                    chiar și 1% miss rate poate fi semnificativ.
+                </p>
+            </div>
+        </section>
+
+        <section class="section" id="sumar">
+            <h2 class="section-title">Rezumat</h2>
+            <div class="info-box info-green">
+                <p class="info-title">📝 Puncte Cheie</p>
+                <ul class="content-list">
+                    <li><strong>Hit Rate</strong> = proporția accesurilor satisfăcute de cache</li>
+                    <li><strong>Miss Rate</strong> = 1 - Hit Rate</li>
+                    <li><strong>AMAT</strong> = Hit Time + Miss Rate × Miss Penalty</li>
+                    <li>AMAT se calculează recursiv pentru cache multi-nivel</li>
+                    <li>Local vs Global miss rate: referință diferită (nivel vs total)</li>
+                </ul>
+            </div>
+        </section>
+    </article>
+
+    <script>
+        document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const content = header.nextElementSibling;
+                const isExpanded = content.classList.contains('expanded');
+                header.classList.toggle('active', !isExpanded);
+                content.classList.toggle('expanded', !isExpanded);
+            });
+        });
+    </script>
+    <script src="../../js/lesson.js"></script>
+</body>
+</html>

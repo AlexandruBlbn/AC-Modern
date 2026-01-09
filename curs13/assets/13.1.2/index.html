@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>13.1.2 - Localitate Temporală și Spațială</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/lesson.css">
+</head>
+<body>
+    <article class="lesson-container">
+        <header class="lesson-header">
+            <span class="lesson-badge">Lecția 13.1.2</span>
+            <h1 class="lesson-title">Localitate Temporală și Spațială</h1>
+            <p class="lesson-subtitle">Principiile fundamentale care fac posibilă eficiența memoriei cache</p>
+        </header>
+
+        <section class="section" id="introducere">
+            <h2 class="section-title">Principiul Localității</h2>
+            <p class="text-content">
+                <strong>Principiul localității</strong> este observația empirică fundamentală care stă 
+                la baza întregii ierarhii de memorie. Acest principiu afirmă că programele tind să 
+                acceseze o porțiune relativ mică din spațiul de adrese la un moment dat, și această 
+                porțiune se schimbă lent în timp.
+            </p>
+            
+            <p class="text-content">
+                Există două forme principale ale localității: <strong>localitatea temporală</strong> 
+                și <strong>localitatea spațială</strong>. Înțelegerea acestor concepte este esențială 
+                pentru proiectarea și optimizarea sistemelor de memorie cache.
+            </p>
+        </section>
+
+        <section class="section" id="temporala">
+            <h2 class="section-title">Localitatea Temporală</h2>
+            
+            <div class="definition-box">
+                <p class="definition-label">Definiție</p>
+                <p class="definition-text">
+                    Localitatea temporală (Temporal Locality) se referă la tendința programelor de a 
+                    accesa aceleași locații de memorie în mod repetat, pe o perioadă scurtă de timp. 
+                    Dacă o locație de memorie a fost accesată recent, este probabil să fie accesată 
+                    din nou în curând.
+                </p>
+            </div>
+
+            <p class="text-content">
+                Localitatea temporală apare frecvent în următoarele situații:
+            </p>
+
+            <ul class="content-list">
+                <li><strong>Bucle (loops)</strong> - variabilele de control și datele procesate în bucle sunt accesate repetat</li>
+                <li><strong>Variabile locale frecvent folosite</strong> - contoare, acumulatoare, indicatoare</li>
+                <li><strong>Instrucțiuni în bucle</strong> - același cod este executat de multe ori</li>
+                <li><strong>Stiva de execuție</strong> - vârful stivei este accesat frecvent</li>
+            </ul>
+
+            <div class="info-box info-blue">
+                <p class="info-title">💡 Exemplu Practic</p>
+                <p>
+                    Într-o buclă <code class="code-inline">for (i = 0; i < 1000; i++)</code>, 
+                    variabila <code class="code-inline">i</code> este accesată de 1000 de ori 
+                    într-un interval scurt de timp. Cache-ul exploatează acest comportament 
+                    păstrând <code class="code-inline">i</code> în memoria rapidă.
+                </p>
+            </div>
+
+            <h3>Cod Exemplu:</h3>
+            <div class="code-block">
+<pre>// Exemplu de localitate temporală
+int suma = 0;                    // suma - acces repetat
+for (int i = 0; i < 1000; i++) { // i - acces repetat
+    suma += array[i];            // suma actualizată în fiecare iterație
+}
+// Variabila 'suma' este accesată de 1001 ori</pre>
+            </div>
+        </section>
+
+        <section class="section" id="spatiala">
+            <h2 class="section-title">Localitatea Spațială</h2>
+            
+            <div class="definition-box">
+                <p class="definition-label">Definiție</p>
+                <p class="definition-text">
+                    Localitatea spațială (Spatial Locality) se referă la tendința programelor de a 
+                    accesa locații de memorie apropiate una de alta. Dacă o locație de memorie este 
+                    accesată, locațiile vecine au o probabilitate mare de a fi accesate în curând.
+                </p>
+            </div>
+
+            <p class="text-content">
+                Localitatea spațială apare frecvent în următoarele situații:
+            </p>
+
+            <ul class="content-list">
+                <li><strong>Parcurgerea secvențială a array-urilor</strong> - elementele sunt accesate unul după altul</li>
+                <li><strong>Execuția secvențială a instrucțiunilor</strong> - instrucțiunile sunt stocate consecutiv</li>
+                <li><strong>Accesul la câmpurile unei structuri</strong> - câmpurile sunt stocate adiacent</li>
+                <li><strong>Operații pe matrici</strong> - elementele pe linie sunt consecutive în memorie</li>
+            </ul>
+
+            <div class="info-box info-blue">
+                <p class="info-title">💡 Exemplu Practic</p>
+                <p>
+                    Când accesăm <code class="code-inline">array[0]</code>, cache-ul aduce un întreg 
+                    bloc de date (de exemplu, 64 bytes) care include și elementele 
+                    <code class="code-inline">array[1]</code>, <code class="code-inline">array[2]</code>, 
+                    etc. Astfel, accesurile viitoare la aceste elemente vor fi rapide (cache hit).
+                </p>
+            </div>
+
+            <h3>Cod Exemplu:</h3>
+            <div class="code-block">
+<pre>// Exemplu de localitate spațială - BUNĂ
+for (int i = 0; i < N; i++) {
+    for (int j = 0; j < M; j++) {
+        suma += matrix[i][j];  // Parcurgere pe linie (secvențial în memorie)
+    }
+}
+
+// Exemplu de localitate spațială - SLABĂ
+for (int j = 0; j < M; j++) {
+    for (int i = 0; i < N; i++) {
+        suma += matrix[i][j];  // Parcurgere pe coloană (salt-uri în memorie)
+    }
+}</pre>
+            </div>
+        </section>
+
+        <section class="section" id="exploatare">
+            <h2 class="section-title">Cum Exploatează Cache-ul Localitatea?</h2>
+            
+            <p class="text-content">
+                Memoria cache exploatează ambele forme de localitate prin mecanisme specifice:
+            </p>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Tip Localitate</th>
+                        <th>Mecanism Cache</th>
+                        <th>Efect</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Temporală</strong></td>
+                        <td>Păstrarea datelor în cache</td>
+                        <td>Datele accesate rămân disponibile pentru accesuri viitoare</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Spațială</strong></td>
+                        <td>Blocuri cache (linii cache)</td>
+                        <td>Se aduc mai multe date odată, anticipând accesuri viitoare</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="info-box info-green">
+                <p class="info-title">🔑 Concept Cheie: Linia de Cache</p>
+                <p>
+                    O <strong>linie de cache</strong> (sau bloc de cache) este unitatea minimă de 
+                    transfer între cache și memoria principală. Dimensiunea tipică este de 
+                    <strong>32-128 bytes</strong>. Acest mecanism exploatează localitatea spațială, 
+                    aducând date vecine odată cu datele solicitate.
+                </p>
+            </div>
+        </section>
+
+        <section class="section" id="masurare">
+            <h2 class="section-title">Măsurarea Localității</h2>
+            
+            <p class="text-content">
+                Calitatea localității unui program poate fi măsurată indirect prin <strong>rata de hit</strong> 
+                (hit rate) a cache-ului. O rată de hit mare (> 90%) indică un program cu bună localitate.
+            </p>
+
+            <div class="card-grid">
+                <div class="info-card">
+                    <div class="card-icon">✅</div>
+                    <h3 class="card-title">Localitate Bună</h3>
+                    <p class="card-text">
+                        • Parcurgeri secvențiale<br>
+                        • Bucle strânse<br>
+                        • Acces regulat la date<br>
+                        • Structuri de date compacte<br>
+                        → Rată hit > 95%
+                    </p>
+                </div>
+                <div class="info-card">
+                    <div class="card-icon">❌</div>
+                    <h3 class="card-title">Localitate Slabă</h3>
+                    <p class="card-text">
+                        • Acces aleatoriu<br>
+                        • Salt-uri mari în memorie<br>
+                        • Structuri de date împrăștiate<br>
+                        • Liste înlănțuite cu noduri dispersate<br>
+                        → Rată hit < 80%
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="sumar">
+            <h2 class="section-title">Rezumat</h2>
+            <div class="info-box info-green">
+                <p class="info-title">📝 Puncte Cheie</p>
+                <ul class="content-list">
+                    <li><strong>Localitatea temporală:</strong> accesul repetat la aceleași date în timp scurt</li>
+                    <li><strong>Localitatea spațială:</strong> accesul la date aflate la adrese apropiate</li>
+                    <li>Cache-ul exploatează localitatea temporală păstrând datele recent accesate</li>
+                    <li>Cache-ul exploatează localitatea spațială prin linii de cache (blocuri)</li>
+                    <li>Scrierea codului care respectă principiile localității îmbunătățește performanța</li>
+                </ul>
+            </div>
+        </section>
+    </article>
+
+    <script>
+        document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const content = header.nextElementSibling;
+                const isExpanded = content.classList.contains('expanded');
+                header.classList.toggle('active', !isExpanded);
+                content.classList.toggle('expanded', !isExpanded);
+            });
+        });
+    </script>
+    <script src="../../js/lesson.js"></script>
+</body>
+</html>

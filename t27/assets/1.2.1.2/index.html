@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Arhitectura Agentului</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+</head>
+
+<body>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  AOS.init();
+</script>
+
+<nav class="navbar hidden" id="main-nav">
+  <ul>
+    <li><a href="#card-deliberativi">Deliberativi</a></li>
+    <li><a href="#card-reactivi">Reactivi</a></li>
+    <li><a href="#card-hibrizi">Hibrizi</a></li>
+  </ul>
+</nav>
+
+<!-- HERO SECTION -->
+<header class="hero" id="top">
+  <div class="hero-content">
+    <h1>1.2.1.2 ARHITECTURA AGENTULUI</h1>
+    <p>Există mai multe arhitecturi ale agenţilor (care se bazează pe comportamentul dominant): <i>deliberative, reactive sau hibride.</i></p>
+    <button onclick="scrollToCards()">Explorează tipurile de arhitecturi</button>
+  </div>
+</header>
+
+<section id="cards-section" class="cards-column hidden">
+  <h2 class="section-title">Tipuri de arhitecturi</h2>
+  <br>
+  <!-- Card 1: Deliberativi -->
+  <div class="card-vertical" id="card-deliberativi">
+    <h3>AGENȚI DELIBERATIVI</h3>
+    <button onclick="toggleDetails('deliberativi-details')">Află mai multe</button>
+    <div id="deliberativi-details" class="hidden">
+      <p>Aceşti agenţi iau decizii bazate pe reprezentările simbolice (modele) pe care le au asupra mediului în care acţionează. 
+        Aceşti agenţi au scopuri precise şi au nevoie de un mare efort pentru a reprezenta simbolic entităţile din mediul înconjurător. 
+        Pe de altă parte, acest model necesită o mulţime de calcule pentru a lua decizii corecte. </p>
+      <ul class="arch-list">
+        <p>Cele mai cunoscute arhitecturi sunt:</p>
+        <li onclick="toggleSub('planificatori')">✔ Agenții planificatori</li>
+        <div id="planificatori" class="hidden sub-detail">
+          <p>Deciziile agenţilor deliberativi se bazează pe planificatoare, ceea ce face ca activitatea de realizare a planificatorului 
+            să fie importantă. În general, planificatorul este un program care generează alte programe sau secvenţe de cod care reprezintă acţiuni (v. fig. 2.2) [19].</p>
+          <br>
+          <p>Această arhitectură, conţine o bibliotecă de planuri predefinite şi preasamblate. Fiecare agent are acces la toate planurile şi deci alege cel mai bun plan.</p>
+          <br>
+          <figure>
+            <img src="./ImaginiR/planificatori.PNG" alt="Arhitectură cu agenţi planificatori" />
+            <figcaption><i><b>Fig. 2.2</b> Arhitectură cu agenţi planificatori şi algoritm de control.</i></figcaption>
+          </figure>
+
+        </div>
+
+        <li onclick="toggleSub('bdi')">✔ Arhitectura <i>Belief-Desire-Intention (BDI) </i>(Convingere-Cerință-Intenție)</li>
+        <div id="bdi" class="hidden sub-detail">
+          <p>Arhitectura BDI are la bază ideea că pentru a face faţă unor situaţii complexe 
+            este bine să se creeze agenţi care raţionează în aceeaşi manieră ca şi oamenii.</p>
+          <br>
+          <ul class="bdi-list">
+            <p>Operaţiile de bază ale agenţilor BDI sunt: </p>
+            <p><strong>● <i>convingerile</i></strong> – care reprezintă cunoştinţele despre agent şi despre lumea înconjurătoare; </p>
+            <p><strong>● <i>cerințele</i></strong> – care reprezintă obiectivele pe care agentul trebuie să le atingă, dar nu ştie încă cum; </p>
+            <p><strong>● <i>intențiile</i></strong> – care reprezintă alegerea acţiunii curente. Intenţiile sunt alese dintr-un set de cerinţe (o cerinţă cu un plan de atingere este o intenţie).</p>
+          </ul>
+          <br>
+          <figure>
+            <img src="./ImaginiR/diagramaBDI.PNG" alt="Diagramă BDI" />
+            <figcaption><i><b>Fig. 2.3</b> Diagramă simplificată a arhitecturii BDI.</i></figcaption>
+          </figure>
+          <br>
+          <p>Fiecare agent BDI are un set de planuri de acţiune care trebuie realizate pentru a-şi îndeplini intenţiile. 
+            Alegerea se face în funcţie de cerinţe şi de intenţii. O intenţie poate fi obţinută prin mai multe planuri. 
+            Convingerile pot fi reprezentate de variabile, baze de date sau expresii simbolice 
+            (din acest motiv, mulţi agenţi utilizează limbajul Prolog, care este foarte apropiat de exprimarea umană). 
+            După ce cerinţele şi intenţiile au fost realizate şi acestea pot deveni variabile, înregistrări în baza de date sau expresii simbolice.</p>
+            <br>
+          <figure>
+            <img src="./ImaginiR/algoritmBDI.PNG" alt="Algoritm BDI" />
+            <figcaption><i><b>Fig. 2.4</b> Algoritm generic pentru un agent BDI.</i></figcaption>
+          </figure>
+          <br>
+          <p>În figura 2.4 este prezentat un exemplu de algoritm generic pentru un agent BDI. Agenţii au nevoie de un modul 
+            care să transforme percepţiile din mediu în convingeri. Mai departe sunt generate cerinţele pe baza convingerilor 
+            curente şi ale intenţiilor, după care intenţiile sunt aduse la zi pe baza noilor cerinţe, convingeri şi intenţii. 
+            După aceasta, este ales cel mai bun plan şi modulul de execuţie îl pune în aplicare.</p>
+          <br>
+          <p>În timpul obţinerii unei intenţii sunt create noi cerinţe şi evident noi intenţii. Acest fapt pare să fie un 
+            dezavantaj dacă agentul nu garantează că fiecare intenţie persistă atâta timp cât este obţinută. În acest caz agentul 
+            ar sări de la o intenţie la alta fără să obţină nimic. Oricum acest mecanism împiedică un agent de a sta agăţat de o intenţie, 
+            dacă aceasta nu duce nicăieri. Algoritmul prezentat în figura 2.4, păstrează intenţia şi planul ales cât timp nu este terminat. 
+            Pentru a implementa un algoritm deschis acesta ar trebui să arate ca cel din figura 2.5.</p>
+          <br>
+          <figure>
+            <img src="./ImaginiR/algoritmperfBDI.PNG" alt="Algoritm perecționat BDI" />
+            <figcaption><i><b>Fig. 2.5</b> Algoritm perfecționat pentru un agent BDI.</i></figcaption>
+          </figure>
+          <br>
+          <p>Pentru a reprezenta complexitatea din spatele arhitecturii BDI este nevoie de un formalism. Pentru a reprezenta şi modela convingerile, 
+            cerinţele şi intenţiile se utilizează o logică primară şi operatori logici modali şi temporali. De fapt, logica din spatele arhitecturii 
+            BDI este definită ca o logică multimodală compusă din trei operatori modali: <i>Belifs</i> (B), <i>Goals</i> (G) şi <i>Intentions</i> (I). 
+            Acest cadru teoretic are câteva neajunsuri mai ales la implementare. Principala problemă este găsirea unui limbaj adecvat, care poate reprezenta 
+            rezonabil logica din spatele arhitecturii BDI. În acest sens au fost chiar create programe speciale, dedicate acestui scop – <i>AgentSpeak</i> (L) [24].</p>
+          <br>
+          <p>Cu toate că arhitectura BDI pare să fie potrivită pentru a implementa agenţi complecşi, trebuiesc luate în considerare şi câteva dezavantaje:
+          <p>→ este dificilă şi complex de programat, deoarece modelul formal din spatele arhitecturii este complex;</p>
+          <p>→ este dificil să se găsească raportul optim între nivelele de proactivitate şi reactivitate;</p>
+          <p>→ nu este o metodă potrivită pentru agenţii care trebuie să înveţe şi să-şi adapteze comportamentul în timpul existenţei;</p>
+          <p>→ este dificil de definit care intenţii şi care cerinţe sunt reprezentate (chiar şi convingerile mai puţin complexe sunt greu de modelat);</p>
+          <p>→ este dificil de ales intenţia potrivită deoarece, de multe ori, sunt multe care par sau chiar sunt adecvate;</p>
+          <p>→ există o lipsă acută de unelte de dezvoltare (mai mult, cele existente nu implementează facil modelul BDI);</p>
+          <p>→ arhitectura are o slabă explicitare a aspectelor multiagent.</p>
+          <br>
+          <p>Cu toate acestea există câteva implementări de succes ale agenţilor BDI, ca de exemplu:</p>
+          <p>● PRS – Procedural Reasoning System;</p>
+          <p>● DMARS – o evoluţie a PRS;</p>
+          <p>● IRMA – Intelligent Resource-bounded Machine Architecture.</p>
+
+        </div>
+
+        <li onclick="toggleSub('eda')">✔ Arhitectura <i>Epistemic-Deontic-Axiologic (EDA) </i>(Cognitiv-Deontologic-Axiologic)</li>
+        <div id="eda" class="hidden sub-detail">
+          <p>Arhitectura EDA se bazează pe teoria normelor şi atitudinilor ontologice, cognitive, deontologice şi axiologice. Această abordare poate fi 
+            considerată un răspuns la lipsa de „socializare” din arhitectura BDI. În loc să se concentreze pe proiectarea stării fiecărui agent, EDA se 
+            concentrează pe norme (<b>norma</b> – <i>norm</i> este o comportare ideală sau recomandată dar care se deosebeşte de <b>regulă</b> – <i>rule</i> 
+            pentru că nu impune o obligaţie; se poate considera că regulile sunt nişte norme impuse) pentru a direcţiona cooperarea dintre agenţi. 
+            Pe lângă această abordare socială, agenţii EDA au multe concepte BDI.</p>
+          <br>
+          <p>Arhitectura EDA este compusă din următoarele comportamente: </p>
+          <p>● epistemic (E) sau cognitiv – reprezintă cunoştinţele despre mediul înconjurător (componenta B de la BDI);</p>
+          <p>● deontologic (D) – conţine comportarea (planurile). În plus mai conţine drepturi şi obligaţii;</p>
+          <p>● axiologic (A) – reprezintă valorile sub care operează agentul.</p>
+          <br>
+          <figure>
+            <img src="./ImaginiR/arhitecturaEDA.PNG" alt="Arhitectura EDA" />
+            <figcaption><i><b>Fig. 2.6</b> Arhitectura EDA.</i></figcaption>
+          </figure>
+          <br>
+          <p>Figura 2.6 prezintă cum operează agenţii EDA. Literele A, D şi E reprezintă componentele amintite. Setul de acţiuni ce urmează a fi executat 
+            (reprezentat printr-un plan) este ales dintr-un set de planuri posibile bazate pe cunoştinţe (starea epistemică) şi normele axiologice.</p>
+          <br>
+          <p>Un agent EDA trebuie să filtreze informaţia captată de senzori. După ce informaţia este transformată într-o formă potrivită pentru agent, 
+            ea este filtrată în concordanţă cu valorile date de componenta axiologică. Aceste valori vor restrânge numărul de planuri posibile.</p>
+          <br>
+          <p>Alegerea comportamentului se face într-o manieră asemănătoare cu cea implementată de BDI. Specificul introdus de EDA se reflectă în 
+            obligaţiile şi drepturile care influenţează alegerea planului de lucru. Pentru a reprezenta aspectul normativ al comportării agenţilor 
+            se utilizează logica deontologică care este o logică modală pentru obligaţii, permisiuni şi prohibiţii. Utilizarea acestui tip de logică 
+            este firească deoarece obligaţiile sunt o parte integrantă a agenţilor EDA. În plus logica deontologică este indicată pentru că ea conţine:</p>
+          <p>● distincţia dintre obligaţii şi necesităţi;</p>
+          <p>● expresia obligaţiilor generale şi specifice;</p>
+          <p>● exprimarea sancţiunii când se încalcă o regulă (ce trebuie făcut).</p>
+          <br>
+          <p>Cu toate acestea EDA pare să fie arhitectura promisă şi ar fi indicat să fie utilizată în probleme complexe care necesită un comportament social. 
+            Există însă şi câteva dezavantaje:</p>
+          <p>→ arhitectura EDA este foarte complexă;</p>
+          <p>→ nu există un mediu de lucru pentru dezvoltare;</p>
+          <p>→ este o mare diferenţă între cadrul teoretic (logica deontologică) şi implementarea practică;</p>
+          <p>→ există puţine implementări în funcţiune.</p>
+          
+        </div>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Card 2: Reactivi -->
+  <div class="card-vertical" id="card-reactivi">
+    <h3>AGENȚI REACTIVI</h3>
+    <button onclick="toggleDetails('reactivi-details')">Află mai multe</button>
+    <div id="reactivi-details" class="hidden">
+      <p>Arhitecturile amintite până acum au utilizat expresii simbolice pentru a reprezenta mediul şi pentru a face planificările. 
+        Aceste reprezentări ale cunoştinţelor sunt modelate utilizând diferite tipuri de logică, care sunt greu de implementat. 
+        Pe de altă parte, în aceste arhitecturi, se presupune că mediul de lucru este cunoscut a priori, sau cel puţin în măsura în 
+        care este nevoie să fie cunoscut. Dacă mediul este cunoscut în avans, complexitatea sistemului de planificare este foarte mare 
+        deoarece planificatorul trebuie să fie foarte general pentru a putea rezolva cele mai diferite situaţii care pot apare. 
+        Această dificultate este mai relevantă în cazul agenţilor utilizaţi la roboţii autonomi care de obicei lucrează în medii nestructurate. 
+        Pe de altă parte, în prezent, este o tendinţă crescută de a utiliza roboţi simpli şi ieftini care necesită o structură de calcul simplă. 
+        În această situaţie au apărut agenţi cu o nouă abordare: agenţii reactivi. Ideile din spatele acestei paradigme sunt:</p>
+      <p>● comportamentul inteligent nu necesită reprezentări explicite;</p>
+      <p>● comportamentul inteligent nu necesită raţionament abstract (simbolic);</p>
+      <p>● inteligenţa este produsul interacţiunii agenţilor cu mediul;</p>
+      <p>● inteligenţa este o proprietate apărută în anumite sisteme complexe.</p>
+      <br>
+      <p>Agenţii reactivi sunt cunoscuţi şi ca agenţi comportamentali deoarece ei presupun existenţa unor comportamente de bază sau secvenţe 
+        de acţiuni care se execută concomitent pentru a forma cel mai de jos nivel al inteligenţei. Aceste comportamente sunt utilizate de altele 
+        mai complexe care crează un nivel superior.</p>
+
+      <ul class="arch-list">
+        <p>Cea mai cunoscută arhitectură este: </p>
+        <li onclick="toggleSub('subsumption')">✔ Arhitectura „Subsumption”</li>
+        <div id="subsumption" class="hidden sub-detail">
+          <p>Aceasta este caracterizată de un set de programe (comportamente) (maşini de stare care rulează secvenţe <i>if then else</i>) care descriu în mod 
+            independent fiecare sarcină pe care agentul trebuie să o îndeplinească şi care este organizarea ierarhică. Fiecare strat (nivel) include 
+            un set de comportamente presetate. Cel mai înalt nivel construit pe cele inferioare are rolul de a asigura cele mai complexe comportamente. 
+            Comportamentul sistemului luat ca întreg operează asincron. Pentru a clarifica mai bine cum funcţionează această arhitectură se consideră 
+            exemplul unui robot autonom care pleacă dintr-un punct de start şi care va întâlni în drumul spre destinaţie mai multe obstacole, ca în figura 2.7 [26; 27]. 
+            Robotul cunoaşte direcţia destinaţiei, deoarece conţine un senzor care primeşte semnale radio dinspre destinaţie. Logica de control a senzorului furnizează, 
+            la cerere, azimutul destinaţiei în raport cu axa longitudinală a robotului. Deasemenea, ţinta este marcată cu o culoare specifică, şi robotul are un senzor, 
+            astfel încât poate detecta atingerea destinaţiei. Deasemenea robotul este prevăzut cu senzori pentru determinarea obstacolelor.</p>
+          <br>
+          <figure>
+            <img src="./ImaginiR/subsumption.PNG" alt="Subsumption" />
+            <figcaption><i><b>Fig. 2.7</b> Robot autonom utilizând o arhitectură „subsumption”.</i></figcaption>
+          </figure>
+          <br>
+          <p>Acest robot este alcătuit din 3 comportamente ierarhice care rulează concomitent şi asincron. Cel mai înalt nivel este <i>GoalOriented</i> (orientarea către destinaţie), 
+            şi care ghidează robotul către destinaţie. Acest task funţionează continuu şi, la fiecare interacţiune, senzorul de azimut este citit şi este apelată o funcţie de 
+            aliniere a robotului faţă de linia de azimut. Simultan, comportamentul <i>AvoidObstacles</i> (evită obstacolele) este rulat la nivelul cel mai de jos până la primul Stop. 
+            Dacă este găsit un obstacol cât robotul se mişcă, apar două condiţii deoarece <i>GoalOriented</i> va încerca să păstreze aliniamentul în timp ce <i>AvoidObstacles</i> va încerca 
+            să evite coliziunea, şi evident, cele două comportamente pot intra în conflict. În aceste condiţii, această arhitectură va determina care nivel este cel mai de jos 
+            şi că acesta are precedenţă faţă de nivelul superior. Din acest motiv comportamentul <i>AvoidObstacles</i> va înhiba comportamentele de nivel mai mare. După evitarea obstacolului, 
+            cel mai înalt nivel este liber să ruleze din nou (instruction <i>run(GoalOriented)</i>). Când robotul ajunge la destinaţie, conflictul este între trei comportamente. În acest caz, 
+            cel mai de jos, Stop, are precedenţă şi robotul se opreşte (v. fig. 2.8).</p>
+          <br>
+          <figure>
+            <img src="./ImaginiR/comportamente.PNG" alt="Comportamente" />
+            <figcaption><i><b>Fig. 2.8</b> Comportamentele robotului autonom.</i></figcaption>
+          </figure>
+          <br>
+          <p>Există multe astfel de implementări în practică, şi care se dovedesc mai fiabile şi mai funcţionale decât cele bazate pe inteligenţa artificială. 
+            Toate aceste implementări se bazează pe aceeaşi idee de a avea un comportament simplu fără o reprezentare a cunoştinţelor.</p>
+          <br>
+          <p>Cu toate că agenţii reactivi sunt simplii, pot fi proiectaţi elegant şi economic. Totuşi aceştia au şi câteva dezavantaje:</p>
+          <p>→ sunt necesare multe informaţii de la senzori pentru luarea unei decizii;</p>
+          <p>→ senzorii oferă doar o informaţii locale şi imediate (absenţa unui model al mediului evită obţinerea oricărei viziuni asupra viitoarelor acţiuni);</p>
+          <p>→ această abordare nu face posibilă învăţarea şi evoluţia agenţilor;</p>
+          <p>→ comportamentul complex al agenţilor reactivi apare pe neaşteptate şi este dificil de a-l modela şi previziona. În consecinţă nu este disponibilă nicio metodologie care să ajute şi să conducă la apariţia unor comportamente previzibile;</p>
+          <p>→ când numărul comportamentelor creşte este foarte greu de înţeles toate interacţiunile implicate.</p>
+
+        </div>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Card 3: Hibrizi -->
+  <div class="card-vertical" id="card-hibrizi">
+    <h3>AGENȚI HIBRIZI (Arhitecturi pe nivele/straturi - <i>layers</i>)</h3>
+    <button onclick="toggleDetails('hibrizi-details')">Află mai multe</button>
+    <div id="hibrizi-details" class="hidden">
+      <ul class="arch-list">
+        <p>Aceste arhitecturi sunt simultan reactive şi deliberative. Ele conţin un set de straturi de interacţiune în care este un comportament deliberativ şi altele cu un comportament reactiv. 
+        Numărul nivelelor variază dar trebuie să existe măcar două: un nivel reactiv şi un nivel deliberativ sau proactiv. În funcţie de modul în care informaţia senzorială este furnizată straturilor 
+        şi de modul în care reacţionează straturile, se pot identifica două tipuri de straturi:</p>
+        <li onclick="toggleSub('orizontale')">✔ Straturi orizontale</li>
+        <div id="orizontale" class="hidden sub-detail">
+          <p>În nivelurile orizontale (v. fig. 2.9) senzorii sunt direct conectaţi la fiecare strat existent, şi care poate avea la rândul lui ieşiri directe. 
+            Fiecare nivel se comportă ca un agent individual care poate comanda ieşirea (actuatorul). Acest fapt poate fi periculos în termeni de coerenţă deoarece 
+            este posibil ca mai multe niveluri să acţioneze acelaşi actuator. Este deci necesar să se creeze un mod de a evita aceste condiţii concurente pentru actuatori. 
+            Arhitecturile cu straturi orizontale sunt uşor de proiectat deoarece există o separare clară între fiecare nivel. Oricum, sincronizarea într-o condiţie de concurenţă 
+            este dificil de realizat chiar şi în cazul unui simplu agent. Această dificultate a condus la dezvoltarea arhitecturilor cu straturi verticale.</p>
+          <br>
+          <figure>
+            <img src="./ImaginiR/niveleOrizontale.PNG" alt="Nivele orizontale" />
+            <figcaption><i><b>Fig. 2.9</b> Arhitectură cu straturi orizontale.</i></figcaption>
+          </figure>
+          <br>
+        </div>
+
+        <li onclick="toggleSub('verticale')">✔ Straturi verticale</li>
+        <div id="verticale" class="hidden sub-detail">
+          <p>În straturile verticale (v. fig. 2.10) informaţia senzorială este comunicată stratului de nivel cel mai mic şi acesta o trimite la nivelul superior şi de aici dacă este cazul se trimite mai sus şi tot aşa. 
+            Fiecare nivel utilizează informaţia necesară primită de la nivelul inferior şi trimite mai departe doar informaţia necesară nivelelor superioare. Informaţia curge secvenţial de la nivelul cel mai inferior 
+            (cel care o primeşte de la senzori) spre nivelul cel mai de sus (care de fapt activează actuatoarele). Aceasta este arhitectura cu straturi verticale într-un pas. Dacă însă nivelul superior nu activează 
+            actuatoarele ci după prelucrarea informaţiei o retrimite la nivelul de jos (care acum acţionează actuatoarele) arhitectura se va numi în doi paşi. În niciuna din situaţii însă nu apare conflict la acţionarea 
+            actuatoarelor, deoarece un singur nivel este răspunzător de aceasta.</p>
+          <br>
+          <figure>
+            <img src="./ImaginiR/niveleVerticale.PNG" alt="Nivele verticale" />
+            <figcaption><i><b>Fig. 2.10</b> Arhitectură cu straturi verticale.</i></figcaption>
+          </figure>
+          <br>
+        </div>
+      </ul>
+      
+      <p>Comparând cele două tipuri de arhitecturi se observă că cea orizontală este mai complicat de implementat (datorită conflictelor) dar este mai flexibilă (datorită autonomiei straturilor) şi mai robustă. 
+        Arhitectura verticală este mai simplu de implementat, dar mai puţin flexibilă şi mai puţin robustă (când un strat nu funcţionează, întregul sistem este blocat datorită întreruperii fluxului informaţional).</p>
+    </div>
+  </div>
+</section>
+
+<!-- Buton SUS -->
+<a href="#top" class="back-to-top">↑</a>
+
+<script src="script.js"></script>
+</body>
+</html>
+
+

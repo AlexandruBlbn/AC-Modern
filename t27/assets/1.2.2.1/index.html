@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Curs Interactiv - Multiagenți</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f9f9f9; }
+    header { background: #34495e; color: white; padding: 1rem; text-align: center; font-size: 1.5rem; position: relative; }
+    .back-top { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); padding: 0.4rem 0.8rem; background-color: #2980b9; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    nav {
+      background: #d5dbdb; /* Culoare de fundal puțin mai închisă */
+      padding: 1rem;
+      width: 250px;
+      float: left;
+      height: calc(100vh + 1000px); /* Ajustat pentru înălțimea header-ului, ajunge până jos */
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+    nav ul { list-style: none; padding: 0; }
+    nav li { margin-bottom: 0.5rem; }
+    nav button { width: 100%; text-align: left; padding: 0.5rem; background: none; border: none; font-size: 1rem; color: #2c3e50; cursor: pointer; border-radius: 4px; }
+    nav button:hover { background-color: #bdc3c7; }
+    main { margin-left: 250px; padding: 2rem; min-height: calc(100vh - 58px); /* Adjusted for header height */ position: relative; }
+    h1, h2 { color: #2c3e50; }
+    .hidden { display: none; }
+
+    /* Styles for the "Coordonarea" section layout and tabs */
+    .coordonarea-tabs {
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 0.5rem;
+    }
+    .tab-button {
+        padding: 0.6rem 1rem;
+        cursor: pointer;
+        border: 1px solid transparent;
+        border-bottom: none;
+        margin-right: 0.3rem;
+        background-color: #e9e9e9;
+        font-size: 0.95rem;
+        border-radius: 5px 5px 0 0;
+        transition: background-color 0.2s ease;
+    }
+    .tab-button:hover {
+        background-color: #d5d5d5;
+    }
+    .tab-button.active {
+        background-color: #fff;
+        border-color: #ccc;
+        border-bottom: 1px solid #fff; /* Hides the container's bottom border under active tab */
+        position: relative;
+        top: 1px; /* Aligns with the content area border */
+    }
+
+    .coordonarea-content-layout {
+        display: flex;
+        flex-direction: row; 
+        align-items: flex-start; 
+        gap: 2rem;             
+    }
+    #coordonareaTextContent {
+        flex: 1; 
+        padding-right: 1rem; 
+        font-size: 1.1rem; 
+        color: #333;
+        line-height: 1.6;
+    }
+    #coordonareaTextContent h3 {
+        margin-top: 0;
+        color: #2980b9;
+    }
+    .diagram-wrapper { 
+        flex: 1.5;
+        position: relative; 
+        margin-top: 2rem; 
+    }
+    .diagram-wrapper img {
+        display: block; 
+        max-width: 100%; 
+        height: auto;
+        border: none;
+    }
+    .diagram-caption { 
+        text-align: center;
+        margin-top: 0.75rem;
+        font-style: italic;
+        color: #555;
+        font-size: 0.95rem;
+    }
+
+    /* Styles for new expandable buttons */
+    .expandables-section {
+        margin-top: 1.5rem;
+    }
+    .expandable-container {
+      margin-bottom: 0.5rem;
+    }
+    .expandable-button {
+      width: 100%; 
+      background-color: #e0eaf0;
+      color: #2c3e50;
+      padding: 0.8rem 1rem;
+      border: 1px solid #b0c4de;
+      border-radius: 4px;
+      text-align: left;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: bold;
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center;
+      transition: background-color 0.2s ease;
+    }
+    .expandable-button:hover {
+      background-color: #d0dae0;
+    }
+    .expandable-button span:first-child {
+        flex-grow: 1;
+        padding-right: 10px;
+    }
+    .expandable-icon {
+      font-weight: bold;
+      font-size: 1.2rem;
+      min-width: 20px;
+      text-align: center;
+    }
+    .expandable-content {
+      padding: 1rem;
+      border: 1px solid #b0c4de;
+      border-top: none; 
+      border-radius: 0 0 4px 4px;
+      background-color: #f7f9fa;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    #coordonareaTextContent ul {
+        padding-left: 20px;
+        margin-top: 0.5rem;
+        margin-bottom: 1rem;
+    }
+    #coordonareaTextContent ul li {
+        margin-bottom: 0.25rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- <header>
+    <button class="back-top" onclick="goBack()">◀ Înapoi</button>
+    Sisteme Multiagent
+  </header> -->
+  <nav>
+    <ul>
+      <li>
+        <button onclick="showSection('multiagenti')">1.2.2 Multiagenții</button>
+        <ul style="padding-left: 2rem;">
+          <li><button onclick="showSection('coordonarea')">1.2.2.1 Coordonarea</button></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+  <main>
+    <section id="multiagenti" class="hidden">
+      <h1 style="color: #2c3e50; font-size: 2rem; margin-bottom: 1rem;">1.2.2 Multiagenții</h1>
+      <div style="display: flex; gap: 4rem; max-width: 1300px; margin: 10px; align-items: center; justify-content: center;">
+        <div style="flex: 1 1 50%; font-size: 1.7rem; line-height: 1.5; text-align: justify; padding-left: 4rem; text-indent: 2rem;">
+          <p>
+            Scopul acestei secțiuni este de a face migrarea de la arhitectura unui singur agent la arhitectura unui grup de agenți. Agenții luați în mod individual sunt nefolositori în cele mai multe cazuri, deoarece cele mai multe scenarii implică agenți care interacționează. În aceste situații cele mai importante aspecte sunt legate de modul în care ei comunică și cum interacționează. Prin aceste mecanisme, comportamentele agenților devin mai complexe decât simpla sumă a comportamentelor individuale.
+          </p>
+        </div>
+        <div style="flex: 1 1 45%; text-align: center;">
+          <img src="SMA_figv2.png" alt="Arhitecturi cu straturi verticale" style="width: 100%; max-width: 600px; height: auto; border: none; display: block; margin: auto;">
+          <p style="margin-top: 0.5rem; font-style: italic; color: #555; font-size: 1rem;">Fig. 2.10 Arhitectură cu straturi verticale</p>
+        </div>
+      </div>
+      <div id="outputTextMultiagenti" style="max-width: 800px; margin: 2rem auto; font-size: 1.1rem; color: #333;"></div>
+    </section>
+
+    <section id="coordonarea" class="hidden">
+      <h2>1.2.2.1 Coordonarea</h2>
+
+      <div class="coordonarea-tabs">
+        <button id="tabCoordonare" class="tab-button active" onclick="showCoordonareText('Coordonare', this)">Coordonare</button>
+        <button id="tabCooperare" class="tab-button" onclick="showCoordonareText('Cooperare', this)">Cooperare</button>
+        <button id="tabCompetitie" class="tab-button" onclick="showCoordonareText('Competiție', this)">Competiție</button>
+      </div>
+
+      <div class="coordonarea-content-layout">
+        <div id="coordonareaTextContent">
+          </div>
+        <div class="diagram-wrapper">
+          <img src="Diagrama.png" alt="Diagrama Coordonare">
+          <p class="diagram-caption">Fig. 2.11 Clasificarea coordonărilor</p>
+        </div>
+      </div>
+    </section>
+  
+  </main>
+  <script>
+    function showSection(id) {
+      document.querySelectorAll('main section').forEach(section => {
+        section.classList.add('hidden');
+      });
+      const targetSection = document.getElementById(id);
+      if (targetSection) {
+        targetSection.classList.remove('hidden');
+        if (id === 'coordonarea') {
+          document.getElementById('tabCoordonare').click();
+        }
+      }
+    }
+
+    function goBack() {
+      document.querySelectorAll('main section').forEach(section => {
+        section.classList.add('hidden');
+      });
+      const textContentDiv = document.getElementById('coordonareaTextContent');
+      if(textContentDiv) textContentDiv.innerHTML = '';
+      document.querySelectorAll('.coordonarea-tabs .tab-button').forEach(button => {
+        button.classList.remove('active');
+      });
+    }
+
+    function initExpandables() {
+      const buttons = document.querySelectorAll('#coordonareaTextContent .expandable-button');
+      buttons.forEach(button => {
+        const newButton = button.cloneNode(true); 
+        button.parentNode.replaceChild(newButton, button);
+
+        newButton.addEventListener('click', () => {
+          const content = newButton.nextElementSibling; 
+          const icon = newButton.querySelector('.expandable-icon');
+          
+          if (content && content.classList.contains('expandable-content')) {
+            const isHidden = content.classList.toggle('hidden');
+            if (isHidden) {
+              icon.textContent = '+';
+            } else {
+              icon.textContent = '−'; 
+            }
+          }
+        });
+      });
+    }
+
+    function showCoordonareText(tabName, clickedTabElement) {
+      const textContentDiv = document.getElementById('coordonareaTextContent');
+      const tabContents = {
+        'Coordonare': `
+                       <p style="text-align: justify; margin-top: 0; text-indent: 30px;">  În orice societate de agenţi, coordonarea (fig. 2.11) este una dintre
+cele mai importante chestiuni, în special datorită faptului că orice agent trebuie
+să împartă anumite sarcini cu altul şi că trebuie să existe un mecanism care să
+gestioneze acest proces. Coordonarea guvernează interacţiunile.</p>
+<p style="text-align: justify;">Coordonarea este necesară la niveluri diferite:</p>
+                       <div class="expandables-section">
+                         <div class="expandable-container">
+                           <button class="expandable-button">
+                             <span>Nivelul de jos care se ocupă de infrastructură</span>
+                             <span class="expandable-icon">+</span>
+                           </button>
+                           <div class="expandable-content hidden">
+                             <p style="text-align: justify; margin-top: 0;"><b>Coordonarea la nivelul de jos:</b> are sens doar dacă există vreun mecanism de comunicaţie. Limbajul de comunicaţie între agenţi (ACL) este utilizat ca mecanism de bază pentru a susţine coordonarea şi interacţiunea agenţilor. Un alt mecanism de bază este dat de platformele de dezvoltare utilizate pentru a crea şi dezvolta sisteme cu multiagenţi. Acest lucru se întâmplă deoarece tipul mecanismului de coordonare a acestor medii este strâns legat de modul în care agenţii sunt proiectaţi şi implementaţi, şi mai ales de tipul de coordonare care este posibil de obţinut în societatea agenţilor.</p>
+                           </div>
+                         </div>
+                         <div class="expandable-container">
+                           <button class="expandable-button">
+                             <span>Nivelul de mijloc care oferă mecanismul de modelare şi susţine nivelurile superioare</span>
+                             <span class="expandable-icon">+</span>
+                           </button>
+                           <div class="expandable-content hidden">
+                             <p style="text-align: justify; margin-top: 0;"><b>Coordonarea la nivelul mediu:</b> la acest nivel, accentul este pus pe modelul de coordonare şi pe limbaj. Arhitecturi ca: DCOM [13], Corba [12] şi Java RMI sunt importante deoarece ele deja implementează câteva mecanisme de coordonare şi permit implementarea unora mai complexe.</p>
+                           </div>
+                         </div>
+                         <div class="expandable-container">
+                           <button class="expandable-button">
+                             <span>Nivelul superior care coordonează logic acţiunile şi face să capete sens noţiunea de cooperare</span>
+                             <span class="expandable-icon">+</span>
+                           </button>
+                           <div class="expandable-content hidden">
+                             <p style="text-align: justify; margin-top: 0;"><b>Coordonarea la nivel înalt:</b> cel mai important aspect care trebuie discutat aici este asistarea coordonării. Într-o coordonare neasistată agenţii comunică direct cu agenţii cu care ei interacţionează. La coordonarea asistată agenţii se bazează pe alţi agenţi, numiţi agenţi de mediere şi care pot fi agenţi brokeri, agenţi translatori etc.</p>
+                           </div>
+                         </div>
+                       </div>
+                       <p style="margin-top: 1.5rem; text-align: justify; text-indent: 30px;">Coordonarea asistată este foarte importantă în economia digitală deoarece agenţii mediatori pot fi consideraţi ca intermediari electronici. Ei au următoarele sarcini:</p>
+                       <ul style="text-align: justify;">
+                         <li>furnizează servicii primare de mediere către agenţii societăţii;</li>
+                         <li>coordonează aceste servicii primare;</li>
+                         <li>asigură un serviciu de mediere fiabil şi de încredere.</li>
+                       </ul>
+                       <p style="text-align: justify; text-indent: 30px;">În ciuda diferenţei de termeni şi indiferent dacă interacţiunea este directă sau mediată, un lucru este comun la toate mecanismele: interacţiunea este obţinută prin angajarea unuia sau mai multor agenţi care sunt de acord să facă conversaţie. În orice caz, agenţii pot urma reguli fixe sau ivite pe parcurs, obligaţii sociale şi stiluri de conversaţie care să le coordoneze activităţile. În figura 2.11 sunt rezumate o varietate de astfel de angajamente.</p>`,
+        'Cooperare': `<p style="text-align: justify; margin-top: 0; text-indent: 30px;"> Cooperarea este coordonarea dintre agenţii care urmăresc aceleaşi scopuri iar competiţia este coordonarea între agenţii neinteresaţi. Este important de remarcat că protocoalele de interacţionare sunt mecanismele care guvernează coordonarea (atât cooperativă cât şi competitivă). </p>
+                       <p style="text-align: justify; margin-top: 0; text-indent: 30px;">Cooperarea în vederea atingerii unui anumit task constă în două faze.
+În prima fază sarcina este descompusă în subtask-uri mai mici iar în faza a doua
+este necesar să se distribuie aceste subtask-uri între agenţii care cooperează. Pot
+fi generate mai multe planuri de descompunere în concordanţă cu resursele
+disponibile şi cu capabilităţile agenţilor respectivi. Descompunerea poate fi
+deasemenea manuală în timpul fazei de proiectare sau automată utilizând
+planificatorii. Distribuirea sarcinilor între agenţi este o problemă diferită şi
+există mai multe strategii care o pot rezolva: </p>
+                       <div class="expandables-section">
+                         <div class="expandable-container">
+                           <button class="expandable-button">
+                             <span>Sistemul de planificare</span>
+                             <span class="expandable-icon">+</span>
+                           </button>
+                           <div class="expandable-content hidden">
+                             <p style="text-align: justify; margin-top: 0;">este cazul în care agenţii planifică interacţiunile
+curente şi viitoare pentru a evita conflictele (există un agent
+coordonator, responsabil cu generarea şi punerea în aplicare a planului); </p>
+                           </div>
+                         </div>
+                         <div class="expandable-container">
+                           <button class="expandable-button">
+                             <span>Structuri organizaţionale</span>
+                             <span class="expandable-icon">+</span>
+                           </button>
+                           <div class="expandable-content hidden">
+                             <p style="text-align: justify; margin-top: 0;">este situaţia în care există un agent manager care divide
+problema şi o distribuie utilizând un mecanism de contractare
+(mecanismul este cunoscut sub denumirea de contract-net protocol; un
+agent pune o problemă şi licitează şi apoi aşteaptă răspunsuri, apoi se
+evaluează propunerile şi se decide care agent are propunerea cea mai
+bună şi câştigă contractul);  </p>
+                           </div>
+                         </div>
+                         <div class="expandable-container">
+                           <button class="expandable-button">
+                             <span>Norme şi legi sociale</span>
+                             <span class="expandable-icon">+</span>
+                           </button>
+                           <div class="expandable-content hidden">
+                             <p style="text-align: justify; margin-top: 0;">este situaţia în care cooperarea este obţinută de
+fiecare agent prin urmărirea şi stabilirea unui model de comportament
+cunoscut sub numele de normă</p>
+                           </div>
+                         </div>
+                         <div class="expandable-container">
+                           <button class="expandable-button">
+                             <span>Contractarea</span>
+                             <span class="expandable-icon">+</span>
+                           </button>
+                           <div class="expandable-content hidden">
+                             <p style="text-align: justify; margin-top: 0;">este situaţia în care există un agent manager care divide
+problema şi o distribuie utilizând un mecanism de contractare
+(mecanismul este cunoscut sub denumirea de contract-net protocol; un
+agent pune o problemă şi licitează şi apoi aşteaptă răspunsuri, apoi se
+evaluează propunerile şi se decide care agent are propunerea cea mai
+bună şi câştigă contractul);</p>
+                           </div>
+                         </div>
+                       </div>`,
+        'Competiție': `
+                       <p style="text-align: justify; margin-top: 0; text-indent: 30px;">Competiţia apare când un grup de agenţi cu interese şi scopuri diferite
+interacţionează. Acest proces se numeşte negociere. Agentul informează întâi
+despre poziţia sa şi apoi încearcă să obţină acorduri sau să facă concesii sau să
+caute alternative. Un domeniu important este dat de comerţul electronic.
+Negocierea este frecvent asociată cu termenii de e-Commerce, e-Business, eContract, etc.</p>
+                       <p style="text-align: justify; margin-top: 0; text-indent: 30px;"> Teoria negocierii acoperă diferite aspecte, apare într-o multitudine de
+forme şi utilizează multe abordări din diferite domenii ştiinţifice ca: inteligenţa
+artificială, antropologie, psihologie socială, sociologie, ştiinţe politice,
+economie şi teoria jocurilor. Negocierea este divizată în concordanţă cu două
+abordări diferite: teoria jocului şi argumentarea. Prima abordare se bazează pe
+conceptul de teorie a jocului, incluzând aspecte ca utilitate şi strategie. Teoria
+jocului nu se preocupă de cum se obţine valoarea ci de alegerea unei alternative
+din mai multe posibile. Pe de altă parte, argumentarea este răspunsul la
+dezavantajele aduse de abordarea teoriei jocului. </p>
+                       <p>Cele mai importante tipuri de negocieri utilizând teoria jocului sunt: </p>
+                       <div class="expandables-section">
+                         <div class="expandable-container">
+                           <button class="expandable-button">
+                             <span>Mecanismul pieţei</span>
+                             <span class="expandable-icon">+</span>
+                           </button>
+                           <div class="expandable-content hidden">
+                             <p style="text-align: justify; margin-top: 0;">care implementează strategii uzual utilizate pe
+piaţă sau în afaceri (această abordare este divizată în contractare şi
+licitare; cel mai bun protocol cunoscut pentru contractare este
+contract-net; în prezent licitaţiile sunt o temă activă de cercetare,
+utilizată puternic în comerţul electronic; în general scopul licitaţiei
+este pentru licitator să maximizeze preţul de vânzare, în timp ce cel
+care licitează doreşte să-l minimizeze. cele mai importante tipuri de
+licitaţi sunt: englezească, olandeză, primul preţ şi Vickrey [32]);</p>
+                           </div>
+                         </div>
+                         <div class="expandable-container">
+                           <button class="expandable-button">
+                             <span>Orientarea pe task</span>
+                             <span class="expandable-icon">+</span>
+                           </button>
+                           <div class="expandable-content hidden">
+                             <p style="text-align: justify; margin-top: 0;">cu toate că agenţii par a avea toate resursele şi
+calificările pentru a-şi îndeplini misiunea, cooperarea şi împărţirea
+resurselor cu alţi agenţi poate fi benefică;</p>
+                           </div>
+                         </div>
+                         <div class="expandable-container">
+                           <button class="expandable-button">
+                             <span>Orientarea pe eficienţă</span>
+                             <span class="expandable-icon">+</span>
+                           </button>
+                           <div class="expandable-content hidden">
+                             <p style="text-align: justify; margin-top: 0;"> este cazul în care negocierea apare pentru a
+maximiza eficienţa agenţilor (diversele stări pe care le pot atinge
+agenţii sunt cuantificate de către o funcţie de eficienţă worth.</p>
+                           </div>
+                         </div>
+                       </div>
+                       <p style="margin-top: 1.5rem; text-align: justify; text-indent: 30px;">În negocierea bazată pe argumente, un agent încearcă   să îi convingă pe ceilalţi asupra punctului său de vedere. Acest lucru se întâmplă prin schimb de propoziţii (argumente), cu justificări şi pe măsură ce sunt exprimate, ele sunt acceptate sau rejectate.</p>`
+      };
+
+      if (textContentDiv) {
+        textContentDiv.innerHTML = tabContents[tabName] || '<p>Conținutul pentru acest tab nu este disponibil.</p>';
+        initExpandables(); 
+      }
+
+      document.querySelectorAll('.coordonarea-tabs .tab-button').forEach(button => {
+        button.classList.remove('active');
+      });
+      if (clickedTabElement) {
+        clickedTabElement.classList.add('active');
+      }
+    }
+    showSection('multiagenti');
+  </script>
+</body>
+</html>

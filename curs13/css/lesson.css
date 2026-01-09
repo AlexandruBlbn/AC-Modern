@@ -1,0 +1,99 @@
+/* Lesson Navigation Styles - Added to each lesson page */
+.lesson-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+    z-index: 1000;
+}
+
+.lesson-nav .btn-nav {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: rgba(255,255,255,0.2);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(10px);
+}
+
+.lesson-nav .btn-nav:hover {
+    background: rgba(255,255,255,0.3);
+    transform: translateY(-2px);
+}
+
+.lesson-nav .btn-nav:disabled,
+.lesson-nav .btn-nav.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.lesson-nav .btn-home {
+    background: white;
+    color: #667eea;
+}
+
+.lesson-nav .btn-home:hover {
+    background: #f0f4ff;
+}
+
+.lesson-nav .progress-info {
+    color: white;
+    font-size: 0.875rem;
+    text-align: center;
+}
+
+.lesson-nav .progress-info strong {
+    display: block;
+    font-size: 1rem;
+}
+
+/* Adjust body padding for fixed nav */
+body {
+    padding-bottom: 80px;
+}
+
+/* Back to top button */
+.btn-top {
+    position: fixed;
+    bottom: 90px;
+    right: 2rem;
+    width: 44px;
+    height: 44px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    transition: all 0.2s ease;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.btn-top.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.btn-top:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
+}

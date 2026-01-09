@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <title>Capitol 1.2.1.1: Entitate de Agent</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page-container">
+
+     <!-- Sidebar-ul din stanga paginii -->
+    <div class="left-sidebar" style="background-color: white;">
+        <!-- <div class="container">
+        <p class="heading-sidebar">Capitole</p>
+        </div>
+        <div class="container">
+          <div class="subcontainer" onclick="window.location.href='/1'" style="cursor: pointer;">
+            <p class="subchapter-sidebar">Capitol 1: Concepte de Suport</p>
+          </div>
+          <div class="subcontainer" onclick="window.location.href='/11'" style="cursor: pointer;">
+            <p class="subchapter-sidebar">Capitol 1.1: Introducere</p>
+          </div>
+          <div class="subcontainer" onclick="window.location.href='/12'" style="cursor: pointer;">
+            <p class="subchapter-sidebar">Capitol 1.2: Sistemele cu Multiagenți</p>
+          </div>
+          <div class="subcontainer" onclick="window.location.href='/1211'" style="cursor: pointer; background-color: steelblue; color: white;">
+            <p class="subchapter-sidebar">Capitol 1.2.1.1: Entitate de Agent</p>
+          </div>
+        </div> -->
+    </div>
+    
+   <!-- Continutul capitolului -->
+    <div class="main-content">
+
+      <p class = "heading-main">Entitate de Agent</p>
+      <div><p class="text-main">Definirea unui agent nu este un consens şi pot fi întâlnite mai multe 
+      definiţii care reflectă punctul de vedere al diferitelor grupuri de cercetare care 
+      au utilizat acest concept. Dacă este un consens faptul că fiecare agent trebuie să 
+      aibă o oarecare autonomie, mai departe există puţine accepţiuni comune. De 
+      exemplu, în timp ce anumiţi cercetători consideră că abilitatea de a învăţa a 
+      agenţilor este o condiţie fundamentală, pentru alţii, acest aspect este irelevant. 
+      În această carte s-a adoptat definiţia agenţilor adaptată după mai mulţi autori de 
+      specialitate [19, 25, 32].</p>
+      </div>
+
+      <div><p style=" font-family: 'UT Sans',  sans-serif; font-size: 1.5rem;">Definiție</p></div>
+      <div class = "container" style="margin-bottom: 10px; background-color:  #F5F5F5;  padding-right: 10px; padding-left: 10px;">
+        <p class="text-main"><i>Un agent este un program de calculator care este situat 
+        într-un mediu oarecare şi care este capabil să facă o acţiune 
+        autonomă în acel mediu, bazată pe scopul său şi pe perceperea 
+        stimulilor din mediul respectiv, pentru a îndeplini obiectivele 
+        pentru care a fost proiectat.</i></p>
+      </div>
+
+      <div>
+        <p class="text-main">Aceste programe trebuie să fie capabile să interacţioneze cu mediul 
+        (lumea exterioară) prin câteva acţiuni şi trebuie să fie capabile să ia decizii 
+        bazate pe perceperea unor stimuli pe care îi primeşte din acel mediu. Agenţii nu 
+        trebuie niciodată să presupună că ei au controlul complet sau cunoştinţe despre 
+        acel mediu (care nu este deterministic) şi percepţia trebuie să fie considerată ca 
+        furnizoare a unor cunoştinţe parţiale. În consecinţă, agenţii trebuie să fie 
+        pregătiţi pentru posibilitatea de eşec. În contextul acestei lucrări, acţiunile şi 
+        percepţia sunt realizate şi percepute prin comunicare. Agenţii cunosc mediul 
+        înconjurător, primesc informaţii şi influenţează mediul prin mesaje. </p>
+      </div>
+
+      <div>
+
+        <p class="text-main"><b>Caracteristicile care sunt importante pentru ca un agent să fie 
+        considerat un agent inteligent în mediul de lucru multiagent sunt: </b></p>
+        
+        <!-- Dropdown list cu caracteristicile agentiilor -->
+        <div class="dropdown-container" onclick="this.classList.toggle('active')">
+          <div class="dropdown-header" style=" font-family: 'UT Sans',  sans-serif; font-size: 1.2rem;">Autonomia</div>
+          <div class="dropdown-content">
+            <p class="text-main">Care este o caracteristică fundamentală deoarece dă 
+            posibilitatea agenţilor de a lua decizii fără intervenţie din exterior, 
+            lucru care deosebeşte fundamental un agent de un program oarecare de 
+            calculator (o caracteristică importantă a autonomiei este posibilitatea 
+            de a lua decizii chiar şi când mediul se schimbă)</p>
+          </div>
+        </div>
+
+        <div class="dropdown-container" onclick="this.classList.toggle('active')">
+          <div class="dropdown-header" style=" font-family: 'UT Sans',  sans-serif; font-size: 1.2rem;">Reactivitatea</div>
+          <div class="dropdown-content">
+            <p class="text-main">Care reprezintă capacitatea unui agent de a reacţiona, 
+            în timp util, la schimbările mediului în care este introdus (a nu se 
+            confunda termenul cu agent chimic reactiv).</p>
+          </div>
+        </div>
+
+        <div class="dropdown-container" onclick="this.classList.toggle('active')">
+          <div class="dropdown-header" style=" font-family: 'UT Sans',  sans-serif; font-size: 1.2rem;">Proactivitatea</div>
+          <div class="dropdown-content">
+            <p class="text-main">Care reprezintă comportarea unui agent care duce 
+            direct la atingerea scopului pentru care a fost proiectat. Acest aspect 
+            implică nu doar răspunsul la stimuli ci şi preluarea iniţiativei. </p>
+          </div>
+        </div>
+
+        <div class="dropdown-container" onclick="this.classList.toggle('active')">
+          <div class="dropdown-header" style=" font-family: 'UT Sans',  sans-serif; font-size: 1.2rem;">Abilitatea socială</div>
+          <div class="dropdown-content">
+            <p class="text-main">Care reprezintă abilitatea de a interacţiona cu alţi 
+            agenţi, care pot avea complet alte obiective. În atingerea obiectivelor 
+            lor într-un mediu alcătuit din diferiţi agenţi, aceştia trebuie să 
+            coopereze şi să-şi completeze competenţele şi deasemenea trebuie să 
+            negocieze. Această interacţiune complexă între agenţi heterogeni poate 
+            fi o bază pentru o comportare socială, care poate deveni mai complexă 
+            decât suma fiecărei comportări a agenţilor în parte. Deoarece 
+            societatea umană a constituit sursa de inspiraţie pentru comportarea 
+            agenţilor, acest domeniu a fost denumit ordine socială.</p>
+          </div>
+        </div>
+
+        <div class="dropdown-container" onclick="this.classList.toggle('active')">
+          <div class="dropdown-header" style=" font-family: 'UT Sans',  sans-serif; font-size: 1.2rem;">Adaptabilitatea</div>
+          <div class="dropdown-content">
+            <p class="text-main">Care reprezintă capabilitatea agenţilor de a se 
+            adapta singuri (în anumite limite), în mediul în care sunt introduşi.</p>
+          </div>
+        </div>
+
+        <div class="dropdown-container" onclick="this.classList.toggle('active')">
+          <div class="dropdown-header" style=" font-family: 'UT Sans',  sans-serif; font-size: 1.2rem;">Continuitatea</div>
+          <div class="dropdown-content">
+            <p class="text-main">Care reprezintă faptul că un agent poate avea o 
+            existenţă pe termen lung.</p>
+          </div>
+        </div>
+
+        <div class="dropdown-container" onclick="this.classList.toggle('active')">
+          <div class="dropdown-header" style=" font-family: 'UT Sans',  sans-serif; font-size: 1.2rem;">Mobilitatea</div>
+          <div class="dropdown-content">
+            <p class="text-main">Care specifică faptul că anumiţi agenţi se pot deplasa dintr
+            un mediu în altul în timp ce îşi păstrează starea internă şi cunoştinţele.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <div>
+        <p class="text-main">Nu este obligatoriu ca toate aceste caracteristici să fie îndeplinite 
+        simultan de către toţi agenţii. Cele mai importante caracteristici sunt: 
+        autonomia, abilitatea socială şi continuitatea. </p>
+      </div>
+
+      <div>
+        <p class="text-main">Un echilibru între pro-activitate şi re-activitate este dificil de atins. Un 
+        robot pro-activ pur poate fi construit, utilizând de exemplu, un plan care să fie 
+        strict urmărit de către un agent. În acest caz, agentul execută planul fără să ia în 
+        considerare mediul. În cazul unui mediu controlat acest agent se poate descurca 
+        foarte bine dacă are suficiente cunoştinţe despre mediul respectiv. Totuşi, 
+        modelul exact al unui mediu este greu de obţinut, şi, în consecinţă, o abordare 
+        pro-activă exclusivă poate fi dezastruoasă, mai ales când informaţiile agentului 
+        nu sunt actualizate cu evoluţia mediului. Prin urmare este necesară un pic de 
+        reactivitate din partea agenţilor pentru a face faţă situaţiilor întâlnite. Pe de altă 
+        parte, dezvoltarea unui agent foarte reactiv poate provoca probleme, deoarece el 
+        se va adapta tot timpul la mediu dar nu îşi va atinge niciodată scopul, deoarece 
+        scopul nu va fi prioritatea lui. Exact la fel se întâmplă şi în societatea umană. 
+        Nivelul de proactivitate şi reactivitate depinde în special de sarcina pe care 
+        trebuie să o îndeplinească agentul respectiv. </p>
+      </div>
+
+      <div>
+
+        <p class="text-main">Paradigmele de agent şi de orientare pe obiect sunt deseori confundate, 
+        cu toate că sunt diferite. Confuzia provine de la faptul că obiectul este 
+        încapsularea unor concepte abstracte, fapt care se poate întâlni şi la agenţi. <b> Un 
+        agent este diferit de un obiect prin următoarele aspecte: </b></p>
+
+        <!-- Dropdown list cu diferentele dintre agenti si obiecte -->
+        <div class="dropdown-container" onclick="this.classList.toggle('active')">
+          <div class="dropdown-header" style=" font-family: 'UT Sans',  sans-serif; font-size: 1.2rem;">Grad mare de autonomie</div>
+          <div class="dropdown-content">
+            <p class="text-main">Obiectele nu pot controla care obiecte le 
+            accesează metodele publice dar un agent are controlul complet asupra 
+            acestui aspect. Agenţii pot decide singuri când pot face acţiunile.</p>
+          </div>
+        </div>
+
+        <div class="dropdown-container" onclick="this.classList.toggle('active')">
+          <div class="dropdown-header" style=" font-family: 'UT Sans',  sans-serif; font-size: 1.2rem;">Grad mare de proactivitate</div>
+          <div class="dropdown-content">
+            <p class="text-main">Obiectele sunt pasive şi nu active. 
+            Agenţii, din contră, sunt proactivi.</p>
+          </div>
+        </div>
+
+        <div class="dropdown-container" onclick="this.classList.toggle('active')">
+          <div class="dropdown-header" style=" font-family: 'UT Sans',  sans-serif; font-size: 1.2rem;">Activitate socială</div>
+          <div class="dropdown-content">
+            <p class="text-main">Obiectele nu au nicio activitate de acest gen ca în cazul 
+            agenţilor. Cooperarea dintre obiecte se reduce la schimbul de mesaje.</p>
+          </div>
+        </div>
+
+        <div class="dropdown-container" onclick="this.classList.toggle('active')">
+          <div class="dropdown-header" style=" font-family: 'UT Sans',  sans-serif; font-size: 1.2rem;">Controlul secvenţei programului</div>
+          <div class="dropdown-content">
+            <p class="text-main">Fiecare agent deţine controlul 
+            secvenţei de program. Obiectele, spre deosebire, sunt apelate la nevoie.</p>
+          </div>
+        </div>
+
+      </div>
+      <!-- Sagetiile de navigatie catre capitolele anterioare, respectiv posterioare -->
+      <div class="navigation-arrows" style="padding-bottom: 50px;">
+            <!-- <span class="arrow" onclick="window.location.href='/12'" style="font-family: 'UT Sans',  sans-serif; font-size: 0.75rem; cursor: pointer;">&#8592; Capitol 1.2: Sisteme cu Multiagenți</span>
+            <span class="arrow" onclick="window.location.href='/1212'" style="font-family: 'UT Sans',  sans-serif; font-size: 0.75rem; cursor: pointer;">Capitol 1.2.1.2: Arhitectura Agentului &#8594;</span> -->
+        </div>
+    </div>
+    
+    <!-- Spatiul gol din dreapta paginii -->
+    <div class="right-sidebar"></div>
+    
+  </div>
+</body>
+
+</html>

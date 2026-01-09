@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>13.4.1 - Concepte de Bază ale Memoriei Virtuale</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/lesson.css">
+</head>
+<body>
+    <article class="lesson-container">
+        <header class="lesson-header">
+            <span class="lesson-badge">Lecția 13.4.1</span>
+            <h1 class="lesson-title">Concepte de Bază ale Memoriei Virtuale</h1>
+            <p class="lesson-subtitle">Fundamente ale sistemului de memorie virtuală</p>
+        </header>
+
+        <section class="section" id="introducere">
+            <h2 class="section-title">Ce este Memoria Virtuală?</h2>
+            <p class="text-content">
+                <strong>Memoria virtuală</strong> este o tehnică care oferă fiecărui proces iluzia 
+                că are acces la un spațiu de adrese mare, contiguu și privat, independent de 
+                cantitatea reală de memorie fizică disponibilă în sistem.
+            </p>
+
+            <div class="definition-box">
+                <p class="definition-label">Definiție</p>
+                <p class="definition-text">
+                    Memoria virtuală este un mecanism hardware-software care permite executarea 
+                    programelor mai mari decât memoria fizică disponibilă, prin maparea automată 
+                    a adreselor virtuale în adrese fizice și prin stocarea temporară a porțiunilor 
+                    inactive pe disc.
+                </p>
+            </div>
+        </section>
+
+        <section class="section" id="motivatie">
+            <h2 class="section-title">De ce Memorie Virtuală?</h2>
+
+            <div class="card-grid">
+                <div class="info-card">
+                    <div class="card-icon">📦</div>
+                    <h3 class="card-title">Programe Mai Mari</h3>
+                    <p class="card-text">
+                        Permite executarea programelor care necesită mai multă memorie decât 
+                        RAM-ul fizic disponibil. Părțile inactive sunt mutate pe disc.
+                    </p>
+                </div>
+                <div class="info-card">
+                    <div class="card-icon">🔒</div>
+                    <h3 class="card-title">Protecție și Izolare</h3>
+                    <p class="card-text">
+                        Fiecare proces are propriul spațiu de adrese izolat. Un proces nu poate 
+                        accesa memoria altui proces fără permisiune explicită.
+                    </p>
+                </div>
+                <div class="info-card">
+                    <div class="card-icon">🔄</div>
+                    <h3 class="card-title">Relocare</h3>
+                    <p class="card-text">
+                        Programele pot fi încărcate oriunde în memoria fizică fără modificări. 
+                        Maparea virtuală → fizică se face la runtime.
+                    </p>
+                </div>
+                <div class="info-card">
+                    <div class="card-icon">🤝</div>
+                    <h3 class="card-title">Partajare</h3>
+                    <p class="card-text">
+                        Permite partajarea memoriei între procese (biblioteci, memorie partajată) 
+                        mapând aceeași pagină fizică în spații virtuale diferite.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="adrese">
+            <h2 class="section-title">Adrese Virtuale vs Fizice</h2>
+            
+            <p class="text-content">
+                Sistemul de memorie virtuală lucrează cu două tipuri de adrese:
+            </p>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Caracteristică</th>
+                        <th>Adrese Virtuale</th>
+                        <th>Adrese Fizice</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Văzute de</strong></td>
+                        <td>Program/CPU</td>
+                        <td>Controller memorie/RAM</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Spațiu</strong></td>
+                        <td>2^n (64 biți = 16 EB teoretic)</td>
+                        <td>Limitat de RAM instalat</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Continuitate</strong></td>
+                        <td>Aparent contiguu</td>
+                        <td>Poate fi fragmentat</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Per proces</strong></td>
+                        <td>Spațiu privat complet</td>
+                        <td>Partajat de toate procesele</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="code-block">
+<pre>Traducere Adresă (Address Translation):
+┌─────────────────────┐     ┌─────────────────────┐
+│  Adresă Virtuală    │────>│   MMU (Hardware)    │────>│  Adresă Fizică      │
+│  (de la CPU)        │     │   + Page Tables     │     │  (către RAM)        │
+└─────────────────────┘     └─────────────────────┘     └─────────────────────┘
+      0x7FFF1234                                              0x123F1234</pre>
+            </div>
+        </section>
+
+        <section class="section" id="mmu">
+            <h2 class="section-title">Memory Management Unit (MMU)</h2>
+            
+            <div class="definition-box">
+                <p class="definition-label">Definiție</p>
+                <p class="definition-text">
+                    <strong>MMU</strong> (Memory Management Unit) este componenta hardware care 
+                    traduce adresele virtuale în adrese fizice. În procesoarele moderne, MMU 
+                    este integrat în CPU.
+                </p>
+            </div>
+
+            <p class="text-content">
+                Funcțiile principale ale MMU:
+            </p>
+            <ul class="content-list">
+                <li><strong>Traducerea adreselor:</strong> Virtual → Fizic</li>
+                <li><strong>Verificarea permisiunilor:</strong> Read, Write, Execute</li>
+                <li><strong>Detectarea page fault:</strong> Când pagina nu e în RAM</li>
+                <li><strong>Caching traduceri:</strong> În TLB (Translation Lookaside Buffer)</li>
+            </ul>
+        </section>
+
+        <section class="section" id="concepte">
+            <h2 class="section-title">Concepte Fundamentale</h2>
+
+            <div class="accordion">
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <span>📄 Pagină (Page)</span>
+                        <span class="icon-plus">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p>
+                                Unitatea de bază a memoriei virtuale. Spațiul de adrese virtual este 
+                                împărțit în pagini de dimensiune fixă (tipic 4 KB, dar și 2 MB sau 1 GB 
+                                pentru "huge pages").
+                            </p>
+                            <p><strong>Dimensiuni tipice:</strong> 4 KB (standard), 2 MB, 1 GB (huge pages)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <span>🖼️ Frame (Cadru)</span>
+                        <span class="icon-plus">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p>
+                                Echivalentul fizic al paginii. Memoria fizică este împărțită în cadre 
+                                de aceeași dimensiune ca paginile. O pagină poate fi plasată în orice 
+                                frame disponibil.
+                            </p>
+                            <p><strong>Mapare:</strong> Pagina N virtuală → Frame M fizic (fără restricții)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <span>📋 Page Table (Tabelul de Pagini)</span>
+                        <span class="icon-plus">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p>
+                                Structura de date (menținută în memorie) care conține mapările 
+                                pagină → frame pentru fiecare proces. Fiecare intrare (PTE - Page Table 
+                                Entry) conține:
+                            </p>
+                            <ul>
+                                <li>Numărul frame-ului fizic</li>
+                                <li>Bit valid/prezent</li>
+                                <li>Biți de permisiuni (R/W/X)</li>
+                                <li>Biți de referință și dirty</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <span>⚠️ Page Fault</span>
+                        <span class="icon-plus">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p>
+                                Excepție generată când se accesează o pagină care nu este în memorie 
+                                (bit valid = 0). Sistemul de operare tratează fault-ul: aduce pagina 
+                                de pe disc, actualizează page table, reia instrucțiunea.
+                            </p>
+                            <p><strong>Cost:</strong> ~10 ms (milisecunde!) - extrem de costisitor!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="ierarhie">
+            <h2 class="section-title">Memoria Virtuală în Ierarhie</h2>
+            
+            <div class="info-box info-blue">
+                <p class="info-title">📊 Memoria Virtuală ca Nivel de Cache</p>
+                <p>
+                    Conceptual, memoria virtuală poate fi văzută ca un nivel suplimentar în ierarhia 
+                    de memorie, unde RAM-ul servește ca "cache" pentru disc:
+                </p>
+                <table class="data-table">
+                    <tr><td><strong>Cache</strong></td><td>RAM</td><td>"Rapid"</td></tr>
+                    <tr><td><strong>Backing Store</strong></td><td>Disc (swap)</td><td>"Lent"</td></tr>
+                    <tr><td><strong>Block Size</strong></td><td>4 KB - 1 GB (pagini)</td><td></td></tr>
+                    <tr><td><strong>Mapare</strong></td><td>Complet asociativă</td><td></td></tr>
+                    <tr><td><strong>Înlocuire</strong></td><td>LRU aproximat (clock)</td><td></td></tr>
+                </table>
+            </div>
+        </section>
+
+        <section class="section" id="sumar">
+            <h2 class="section-title">Rezumat</h2>
+            <div class="info-box info-green">
+                <p class="info-title">📝 Puncte Cheie</p>
+                <ul class="content-list">
+                    <li>Memoria virtuală oferă iluzia unui spațiu de adrese mare și privat</li>
+                    <li>MMU traduce adresele virtuale în adrese fizice</li>
+                    <li>Spațiul este împărțit în pagini (virtuale) și frame-uri (fizice)</li>
+                    <li>Page table conține mapările și permisiunile</li>
+                    <li>Page fault apare când pagina nu e în RAM (cost ~ms)</li>
+                </ul>
+            </div>
+        </section>
+    </article>
+
+    <script>
+        document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const content = header.nextElementSibling;
+                const isExpanded = content.classList.contains('expanded');
+                header.classList.toggle('active', !isExpanded);
+                content.classList.toggle('expanded', !isExpanded);
+            });
+        });
+    </script>
+    <script src="../../js/lesson.js"></script>
+</body>
+</html>

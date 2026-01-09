@@ -1,0 +1,192 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 600px;   /* revenit la valoarea inițială */
+    margin: 40px auto;
+    padding-top: 54px;
+    flex: 1 0 auto;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    /* elimină padding-ul lateral */
+    padding: 0;
+}
+
+.category {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    cursor: pointer;
+    background: #f9f9f9;
+    border-radius: 16px;
+    padding: 16px 20px; /* padding lateral aici! */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: background 0.2s;
+    margin-bottom: 16px;
+}
+
+.category:hover {
+    background: #f0f0f0;
+}
+
+.row > .circle,
+.row > .box {
+    margin-right: 12px;
+    margin-bottom: 0;
+}
+
+.circle {
+    min-width: 48px;
+    min-height: 48px;
+    width: 48px;
+    height: 48px;
+    background: #4a90e2;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-right: 24px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    transition:
+        box-shadow 0.3s cubic-bezier(.4,2,.6,1),
+        transform 0.2s cubic-bezier(.4,2,.6,1);
+}
+
+.row:hover .circle {
+    transform: scale(1.08);
+    box-shadow: 0 4px 16px rgba(58,92,168,0.18);
+}
+
+.box {
+    flex: 1;                  /* ocupă tot spațiul rămas */
+    height: 48px;
+    background: #fff;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    font-weight: 500;
+    padding: 0 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: 
+        box-shadow 0.3s cubic-bezier(.4,2,.6,1),
+        transform 0.2s cubic-bezier(.4,2,.6,1);
+}
+
+.row:hover .box {
+    transform: scale(1.04);
+    box-shadow: 0 4px 16px rgba(58,92,168,0.18);
+}
+
+.content {
+    display: block;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: 
+        max-height 0.7s cubic-bezier(.4,0,.2,1),
+        opacity 0.4s cubic-bezier(.4,0,.2,1),
+        padding 0.4s cubic-bezier(.4,0,.2,1);
+    width: 100%;
+    align-self: stretch;
+    margin-top: 16px;
+    background: #c3c9d6;
+    border-radius: 8px;
+    padding: 0; /* elimină padding lateral */
+    box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+    text-align: left;
+}
+
+.content p {
+    text-indent: 2em;
+    opacity: 0;
+    max-height: 0;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    transition: opacity 0.4s, max-height 0.4s;
+}
+
+.content p.shown {
+    opacity: 1;
+    max-height: 500px;
+    margin: 16px 0;
+    padding: 0;
+}
+
+.category.active .content {
+    max-height: 500px;
+    opacity: 1;
+    padding: 12px 20px 32px 20px; /* padding-bottom mai mare */
+}
+
+.top-bar {
+    width: 100vw;
+    background: #3a5ca8;         /* albastru închis, tematic */
+    color: #fff;
+    font-size: 1.3rem;
+    font-weight: bold;
+    padding: 18px 40px 18px 32px; /* spațiu generos la stânga */
+    text-align: left;
+    letter-spacing: 1px;
+    box-shadow: 0 2px 8px rgba(58,92,168,0.08);
+    position: fixed;      /* modificat din relative în fixed */
+    top: 0;
+    left: 0;
+    margin-left: 0;
+    margin-right: 0;
+    z-index: 1000;
+}
+
+.footer {
+    width: 100%; /* schimbat din 100vw */
+    background: #3a5ca8;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+    box-shadow: 0 -2px 8px rgba(58,92,168,0.08);
+    gap: 32px;
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.footer-img {
+    max-width: 60px;
+    height: auto;
+    display: block;
+}
+
+.footer-text {
+    flex-shrink: 0;
+    font-size: 1.2rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+}

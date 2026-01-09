@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>13.3.3 - Optimizări Cache</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/lesson.css">
+</head>
+<body>
+    <article class="lesson-container">
+        <header class="lesson-header">
+            <span class="lesson-badge">Lecția 13.3.3</span>
+            <h1 class="lesson-title">Optimizări Cache</h1>
+            <p class="lesson-subtitle">Tehnici pentru îmbunătățirea performanței memoriei cache</p>
+        </header>
+
+        <section class="section" id="introducere">
+            <h2 class="section-title">Strategii de Optimizare</h2>
+            <p class="text-content">
+                Amintim formula AMAT: <code class="code-inline">AMAT = Hit Time + Miss Rate × Miss Penalty</code>. 
+                Optimizările cache vizează reducerea unuia sau mai multor termeni din această ecuație.
+            </p>
+
+            <div class="card-grid">
+                <div class="info-card">
+                    <div class="card-icon">⚡</div>
+                    <h3 class="card-title">Reducere Hit Time</h3>
+                    <p class="card-text">Cache-uri mici și simple, căi de acces directe</p>
+                </div>
+                <div class="info-card">
+                    <div class="card-icon">📉</div>
+                    <h3 class="card-title">Reducere Miss Rate</h3>
+                    <p class="card-text">Cache-uri mai mari, asociativitate, prefetching</p>
+                </div>
+                <div class="info-card">
+                    <div class="card-icon">🚀</div>
+                    <h3 class="card-title">Reducere Miss Penalty</h3>
+                    <p class="card-text">Cache-uri multi-nivel, write buffers, early restart</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="hit-time">
+            <h2 class="section-title">Optimizări pentru Reducerea Hit Time</h2>
+
+            <div class="accordion">
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <span>🔲 Cache-uri L1 Mici și Simple</span>
+                        <span class="icon-plus">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p>
+                                Cache-urile L1 sunt menținute mici (32-64 KB) pentru a permite acces în 
+                                1-4 cicluri. Timpul de acces crește cu dimensiunea și asociativitatea.
+                            </p>
+                            <p><strong>Trade-off:</strong> Cache mic = hit time mic dar miss rate mai mare</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <span>🔀 Way Prediction</span>
+                        <span class="icon-plus">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p>
+                                Prezice în ce "way" al setului se află datele înainte de a compara toate 
+                                tag-urile. Dacă predicția e corectă, accesul e rapid ca la mapare directă. 
+                                Dacă e greșită, se verifică celelalte căi.
+                            </p>
+                            <p><strong>Beneficiu:</strong> Reduce timpul mediu de hit fără a sacrifica asociativitatea</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <span>📊 Pipelined Cache Access</span>
+                        <span class="icon-plus">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p>
+                                Împarte accesul la cache în mai multe etape pipeline. Permite frecvențe 
+                                mai mari, dar crește latența efectivă pentru un singur acces.
+                            </p>
+                            <p><strong>Exemplu:</strong> Intel folosește L1 pipelined în 3-4 cicluri pentru frecvențe GHz</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="miss-rate">
+            <h2 class="section-title">Optimizări pentru Reducerea Miss Rate</h2>
+
+            <div class="accordion">
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <span>📦 Cache-uri Mai Mari</span>
+                        <span class="icon-plus">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p>
+                                Metoda directă pentru reducerea capacity miss-urilor. Dublarea dimensiunii 
+                                reduce miss rate cu aproximativ 30% (legea empirică).
+                            </p>
+                            <p><strong>Trade-off:</strong> Timp de acces mai mare, cost și consum energie mai mari</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <span>🔗 Asociativitate Mai Mare</span>
+                        <span class="icon-plus">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p>
+                                Reduce conflict miss-urile. Trecerea de la mapare directă la 2-way 
+                                elimină majoritatea conflictelor. Asociativitate > 8-way are beneficii 
+                                marginale.
+                            </p>
+                            <p><strong>Regulă:</strong> 8-way ≈ performanța complet asociativ pentru majoritatea aplicațiilor</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <span>🎯 Hardware Prefetching</span>
+                        <span class="icon-plus">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p>
+                                Hardware-ul detectează pattern-uri de acces (de ex., stride constant) 
+                                și aduce blocuri în cache înainte de a fi solicitate.
+                            </p>
+                            <table class="data-table">
+                                <tr><td><strong>Sequential Prefetcher</strong></td><td>Aduce blocul următor automat</td></tr>
+                                <tr><td><strong>Stride Prefetcher</strong></td><td>Detectează și urmărește stride-uri</td></tr>
+                                <tr><td><strong>Stream Prefetcher</strong></td><td>Urmărește mai multe stream-uri simultane</td></tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <span>💻 Optimizări Software (Compiler)</span>
+                        <span class="icon-plus">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <ul class="content-list">
+                                <li><strong>Loop interchange:</strong> Schimbă ordinea buclelor pentru acces secvențial</li>
+                                <li><strong>Loop fusion:</strong> Combină bucle pentru reutilizarea datelor în cache</li>
+                                <li><strong>Loop tiling/blocking:</strong> Împarte datele pentru a încăpea în cache</li>
+                                <li><strong>Software prefetching:</strong> Instrucțiuni prefetch explicite</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <span>🏠 Victim Cache</span>
+                        <span class="icon-plus">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p>
+                                Un cache mic (4-16 linii), complet asociativ, care păstrează liniile 
+                                recent eliminate din L1. Reduce conflict miss-urile pentru mapare directă.
+                            </p>
+                            <div class="code-block">
+<pre>La Miss L1:
+1. Caută în Victim Cache
+2. Dacă găsit → swap între L1 și Victim Cache
+3. Dacă nu → aduce din L2, linia evacuată merge în Victim</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="miss-penalty">
+            <h2 class="section-title">Optimizări pentru Reducerea Miss Penalty</h2>
+
+            <div class="accordion">
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <span>🏗️ Cache-uri Multi-Nivel</span>
+                        <span class="icon-plus">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p>
+                                Adăugarea L2, L3 reduce miss penalty-ul L1. Un miss în L1 poate fi 
+                                servit de L2 în 10-20 cicluri vs 100+ cicluri pentru RAM.
+                            </p>
+                            <p>Miss Penalty efectiv L1 = HT_L2 + MR_L2 × MP_L2</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <span>✍️ Write Buffer</span>
+                        <span class="icon-plus">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p>
+                                Un buffer care păstrează scrierile în curs de procesare. Procesorul 
+                                poate continua fără să aștepte finalizarea scrierii în memorie.
+                            </p>
+                            <p><strong>Funcționare:</strong> Scrierea e plasată în buffer → procesorul continuă → 
+                            buffer-ul trimite datele la memorie în fundal</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <span>⏩ Early Restart / Critical Word First</span>
+                        <span class="icon-plus">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p>
+                                <strong>Early Restart:</strong> Procesorul primește cuvântul cerut imediat 
+                                ce ajunge, nu așteaptă întreaga linie.
+                            </p>
+                            <p>
+                                <strong>Critical Word First:</strong> Memoria trimite întâi cuvântul cerut, 
+                                apoi restul liniei (out-of-order delivery).
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <span>🔄 Non-Blocking Cache</span>
+                        <span class="icon-plus">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p>
+                                Cache-ul poate procesa noi accesuri în timp ce un miss este în curs 
+                                ("hit under miss" sau "miss under miss"). Esențial pentru execuția 
+                                out-of-order.
+                            </p>
+                            <p><strong>MSHR:</strong> Miss Status Handling Registers - urmăresc miss-urile în curs</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="sumar">
+            <h2 class="section-title">Rezumat</h2>
+            <div class="info-box info-green">
+                <p class="info-title">📝 Puncte Cheie</p>
+                <ul class="content-list">
+                    <li><strong>Hit Time:</strong> Cache-uri mici, way prediction, pipelining</li>
+                    <li><strong>Miss Rate:</strong> Cache-uri mari, asociativitate, prefetching, optimizări software</li>
+                    <li><strong>Miss Penalty:</strong> Multi-nivel, write buffers, early restart, non-blocking</li>
+                    <li>Există trade-off-uri între diferite optimizări</li>
+                    <li>Combinația optimă depinde de workload și constrângeri</li>
+                </ul>
+            </div>
+        </section>
+    </article>
+
+    <script>
+        document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const content = header.nextElementSibling;
+                const isExpanded = content.classList.contains('expanded');
+                header.classList.toggle('active', !isExpanded);
+                content.classList.toggle('expanded', !isExpanded);
+            });
+        });
+    </script>
+    <script src="../../js/lesson.js"></script>
+</body>
+</html>

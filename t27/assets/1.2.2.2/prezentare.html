@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1.2.2.2 Comunicarea - limbajele ACL</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #333;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        /* Dropdown */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            min-width: 250px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            z-index: 1000;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: 0.75rem 1rem;
+            text-decoration: none;
+            color: #333;
+            transition: background 0.3s ease;
+        }
+
+        .dropdown-content a:hover {
+            background: #f8f9fa;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 80px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 2rem;
+        }
+
+        .hero {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .breadcrumb {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .content-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .content-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            color: #667eea;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        .subsection {
+            margin-bottom: 2rem;
+        }
+
+        .subsection h3 {
+            color: #764ba2;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .icon {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        .text-content {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border: 2px solid #667eea;
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .highlight-box::before {
+            content: '💡';
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: white;
+            padding: 0 10px;
+            font-size: 1.5rem;
+        }
+
+        .list-container {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .custom-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .custom-list li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #eee;
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .custom-list li:last-child {
+            border-bottom: none;
+        }
+
+        .custom-list li::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        /* Two column figure layout */
+        .figure-container {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .figure-title {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+
+        .two-column-figure {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 1rem;
+            align-items: center;  /* asta centrează pe verticală */
+        }
+
+        .arrow {
+            font-size: 1.5rem;
+            color: #667eea;
+            font-weight: bold;
+            align-self: center;  /* adaugă și asta pentru extra centrat */
+        }
+
+        .code-example {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            position: relative;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .code-example::before {
+            content: 'KQML/FIPA';
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            font-size: 0.7rem;
+            color: #a0aec0;
+        }
+
+        /* Tables */
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            margin: 2rem 0;
+        }
+
+        .table-title {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 1rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            vertical-align: top;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin: 0.5rem;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .content-card {
+                padding: 1.5rem;
+            }
+
+            .two-column-figure {
+                grid-template-columns: 1fr;
+            }
+
+            .dropdown-content {
+                min-width: 200px;
+            }
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">📖 Limbajele ACL</div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#top" class="nav-link">🏠 Acasă</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link">📚 Conținut ▼</a>
+                    <div class="dropdown-content">
+                        <a href="#introducere">🌟 Introducere</a>
+                        <a href="#categorii">📋 Categorii</a>
+                        <a href="#niveluri">📝 Niveluri</a>
+                        <a href="#kqml">🔍 KQML</a>
+                        <a href="#probleme">❌ Dezavantaje KQML</a>
+                        <a href="#fipa">🎯 FIPA ACL</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Hero Section -->
+        <div id="top" class="hero">
+            <h1>1.2.2.2 Comunicarea - limbajele ACL</h1>
+        </div>
+
+        <!-- Introduction -->
+        <div id="introducere" class="content-card">
+            <h2 class="section-title">🌟 Introducere</h2>
+            <div class="text-content">
+                <p>Studiul mediului natural a demonstrat că cele mai longevive comunități sunt cele care au dezvoltat un mecanism de comunicare și interacțiune complexă. Limbajul uman este de fapt cel mai complex mecanism de comunicare și evident, omul este capabil să dezvolte cele mai complexe societăți. Considerând aceste aspecte, pare logic că o societate de agenți complexă poate fi creată doar cu ajutorul unui limbaj de comunicare între agenți. Limbajele ACL (Agent Communication Languages), trebuie să fie publice pentru a permite conversația între un număr mare de agenți.</p>
+            </div>
+
+            <div class="text-content">
+                <p>Agenții angajați în negocieri au nevoie de ACL pentru a putea schimba informații mai complexe decât un simplu mesaj. Ideea din spatele procesului de comunicare dintre agenți este schimbul de informații și cunoștințe. Dar, dacă acestea ar fi singurele obiective, ACL nu ar fi necesar deoarece computerele au deja un mecanism care să permită schimbul de informații și cunoștințe. Diferența față de aceste mecanisme se regăsește în obiecte și complexitatea semantică. În mod clasic se schimbă doar obiecte care nu au asociată nicio semnatică. ACL, permite schimbul de propoziții, reguli și acțiuni.</p>
+            </div>
+        </div>
+
+        <!-- Communication Categories -->
+        <div id="categorii" class="content-card">
+            <h2 class="section-title">📋 Categorii de comunicare</h2>            
+            <div class="list-container">
+                <div class="text-content">
+                    <p>Cele mai importante categorii de proceduri comunicative sunt:</p>
+                </div>
+                <ul class="custom-list">
+                    <li><strong>reprezentative</strong> – paradigma în acest caz este informarea</li>
+                    <li><strong>directive</strong> – paradigma în acest caz este cererea</li>
+                    <li><strong>ordinele</strong> – paradigma în acest caz este promisiunea</li>
+                    <li><strong>expresivitățile</strong> – paradigma în acest caz este mulțumirea</li>
+                    <li><strong>declarațiile</strong> – paradigma în acest caz este declararea</li>
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- Communication Levels -->
+        <div id="niveluri" class="content-card">
+            <h2 class="section-title">📝 Niveluri de comunicare</h2>
+            <p>În situațiile de punere în comun a informațiilor sau a comunicării între agenți se pot distinge trei niveluri:</p>
+            <br>
+            
+            <div class="subsection">
+                <h3><span class="icon">1</span>Nivelul sintaxei</h3>
+                <div class="text-content">
+                    <p>care descrie cum sunt organizate informațiile</p>
+                </div>
+            </div>
+            
+            <div class="subsection">
+                <h3><span class="icon">2</span>Nivelul semantic</h3>
+                <div class="text-content">
+                    <p>care indică cum se interpretează conceptele</p>
+                </div>
+            </div>
+            
+            <div class="subsection">
+                <h3><span class="icon">3</span>Nivelul comunicației</h3>
+                <div class="text-content">
+                    <p>care prezintă atitudinile schimbate de agenți</p>
+                </div>
+            </div>
+
+            <div class="text-content">
+                <p>Limbajele ACL trebuie să poată implementa aceste 3 straturi sau nivele. Acesta este de fapt cazul celor două limbaje importante: KQML (Knowledge Query Manipulation Language) cu toate dialectele sale și FIPA ACL (FIPA Agent Comunication Language) [16÷18]. Deasemenea în curs de dezvoltare și standardizare mai este KIF (Knowledge Interchange Format) care a fost proiectat pentru a fi un interlimbaj. KIF este primul limbaj care a utilizat notații de gen LISP. Se pot forma propoziții și variabile pe bază de atomi.</p>
+            </div>
+        </div>
+
+        <!-- KQML Section -->
+        <div id="kqml" class="content-card">
+            <h2 class="section-title">🔍 KQML (Knowledge Query Manipulation Languages)</h2>
+            
+            
+            <div class="text-content">
+                <p>KQML este un limbaj bazat pe mesaje pentru comunicarea între agenți. Este dependent de mecanismul de transport (TCP/IP, SMTP, IIOP, etc.) de limbajul conținut (KIF, SQL, STEP, Prolog, LISP, etc.) și de ontologia utilizată.</p>
+            </div>
+
+            <div class="text-content">
+                <p>Se pot deosebi trei straturi conceptuale în KQML:</p>
+            </div>
+
+            <div class="list-container">
+                <ul class="custom-list">
+                    <li><strong>conținutul</strong> – mesajul propriu-zis</li>
+                    <li><strong>comunicația</strong> – include specificațiile din nivelul de jos</li>
+                    <li><strong>mesajul</strong> – care determină tipul de interacțiune</li>
+                </ul>
+            </div>
+
+            <div class="figure-container">
+                <div class="figure-title">Fig. 2.12 Exemplu de mesaj KQML</div>
+                <div class="two-column-figure">
+                    <div class="code-example">
+(ask-one
+<br>
+  &emsp;:<i>sender</i> brokerAg
+  <br>
+  &emsp;:<i>receiver</i> clusterAg
+  <br>
+  &emsp;:<i>content</i> members(M)
+  <br>
+  &emsp;:<i>reply-with</i> brokerRequest
+  <br>
+  &emsp;:<i>language</i> Prolog
+  <br>
+  &emsp;:<i>ontology</i> brokerOntology
+  <br>)
+                    </div>
+                    <div class="arrow">➤</div>
+                    <div class="code-example">
+(tell
+<br>
+  &emsp;:<i>sender</i> clusterAg
+  <br>
+  &emsp;:<i>receiver</i> brokerAg
+  <br>
+  &emsp;:<i>content</i> members([ag1, ag2, ag3])
+  <br>
+  &emsp;:<i>in-reply-to</i> brokerRequest
+  <br>
+  &emsp;:<i>language</i> Prolog
+  <br>
+  &emsp;:<i>ontology</i> brokerOntology
+  <br>)
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-content">
+                <p>În figură sunt prezentate două mesaje KQML, care reprezintă un dialog între brokerAg și clusterAg. brokerAg dorește să știe care sunt agenții membri ai clusterului, reprezentați de clusterAg. Pentru a genera cererea, brokerAg trimite comanda cu specificația ask-one și cu mesajul members(M) (din Prolog). Ontologia urmată este brokerOntology.</p>
+            </div>
+
+            <div class="text-content">
+                <p>KQML utilizează câteva câmpuri pentru a caracteriza mesajul. De exemplu, :sender conține adresa expeditorului, :receiver conține adresa destinatarului, :content conține mesajul într-un limbaj adecvat, :language indică ce limbaj este folosit, :ontology indică ontologia utilizată, :reply-with indică faptul că expeditorul dorește răspunsul la acea adresă și :in-reply-to este folosit pentru a indica ce mesaj să fie utilizat pentru răspuns. Câmpurile :in-replay-to, :sender și :receiver aparțin stratului de comunicare, iar :language și :ontology aparțin stratului mesaj.</p>
+            </div>
+
+            <div class="text-content">
+                <p>În exemplul de mai sus, expeditorul așteaptă ca agentul să includă în câmpul :in-reply-to identificatorul brokerRequest, deoarece mesajul de la expeditor include acel identificator în câmpul :reply-with.</p>
+            </div>
+        </div>
+
+        <!-- KQML Problems -->
+        <div id="probleme" class="content-card">
+            <h2 class="section-title">❌ Dezavantaje ale KQML</h2>
+            
+            <div class="list-container">
+                <ul class="custom-list">
+                    <li>KQML este folosit frecvent pe scară largă, în ciuda unor dezavantaje [32]: există multe dialecte, ceea ce face de multe ori interoperabilitatea dificilă;</li>
+                    <li>mecanismul de transport nu a fost niciodată definit precis și din nou interoperabilitatea are de suferit, deoarece este imposibil de comunicat fără a defini ce mecanism este folosit sau suportat</li>
+                    <li>are definiții semantice formale sărace, care permit diferite interpretări</li>
+                    <li>nu există suport pentru ordine (directive) (fapt critic deoarece în sistemele multiagent este nevoie de ordine pentru coordonare)</li>
+                    <li>are un set mare de reprezentări ad-hoc</li>
+                </ul>
+            </div>
+
+            <div class="text-content">
+                <p>Aceste dezavantaje au condus la dezvoltarea unor noi limbaje care încearcă să depășească unele din aceste dezavantaje fără a introduce însă schimbări radicale.</p>
+            </div>
+        </div>
+
+        <!-- FIPA ACL Section -->
+        <div id="fipa" class="content-card">
+            <h2 class="section-title">🎯 FIPA ACL</h2>
+            
+            <div class="text-content">
+                <p>FIPA ACL. Este un acronim de la societatea care l-a dezvoltat: Federation for Intelligent Physical Agents [17] și de la denumirea generică dată limbajelor pentru agenți. Acest limbaj a decis să dezvolte un ACL bazat pe limbajul Arcol, dezvoltat de France Telecom și care are principala caracteristică că este puternic semantic formal. Principalele caracteristici sunt:</p>
+            </div>
+
+            <div class="list-container">
+                <ul class="custom-list">
+                    <li>se bazează pe teoria vorbirii (a speech-ului)</li>
+                    <li>utilizează aceleași straturi conceptuale: conținut, comunicare și mesaj</li>
+                    <li>sintaxa mesajului este foarte apropiată de cea din KQML</li>
+                    <li>este independent de mecanismul de transport, de limbajul conținutului și de ontologia utilizată</li>
+                </ul>
+            </div>
+            <br>
+            <div class="text-content">
+                <p>Setul de indici de calitate din FIPA ACL este redus la 22 [16]. Fiecare este descris cu o formă narativă și una semantică bazate pe logica modală. Cele mai importante caracteristici (din setul de 22), în contextul SM-ALFAr sunt:</p>
+            </div>
+
+            <div class="list-container">
+                <ul class="custom-list">
+                    <li><strong>Inform</strong> – mecanismul de bază pentru comunicare</li>
+                    <li><strong>Request</strong> – al doilea ca grad de utilizare</li>
+                    <li><strong>Agree</strong> – indică faptul că expeditorul este de acord cu cererea făcută</li>
+                    <li><strong>Cancel</strong> –mesaj implementat pentru suportul protocolului de cerere</li>
+                    <li><strong>Failure</strong> –este utilizat în protocolul de cerere și exprimă faptul că agentul nu este capabil să execute cererea</li>
+                    <li><strong>Not-understood</strong> – indică faptul că agentul nu a înțeles mesajul</li>
+                    <li><strong>Query-if</strong> – este utilizată pentru a trimite o interogare (query)</li>
+                    <li><strong>Refuse</strong> – exprimă refuzul de a executa o cerere, dar mesajul este însoțit întotdeauna de explicația refuzului</li>
+                </ul>
+            </div>
+
+            <div class="text-content">
+                <p>FIPA ACL nu are obligații de utilizare a unui anumit limbaj pentru conținut. Furnizează însă specificații pentru KIF, RDF, CCL și SL. Cele mai multe implementări urmăresc însă limbajul semantic (SL). Acesta este și cazul JADE [21] care este compatibil FIPA și este mediul utilizat pentru implementarea SM-ALFAr.</p>
+            </div>
+
+            <div class="text-content">
+                <p>În figura 2.13 sunt prezentate diferitele câmpuri și mai mulți parametrii utilizați de mesajele FIPA ACL. Cele mai multe sunt similare cu mesajele KQML. Câmpul :protocol care este folosit ca indicator al protocolului de comunicare utilizat de expeditor este nou. Aceste protocoale sunt definite de FIPA ca tipuri de mesaje. FIPA definește următoarele protocoale: FIPA Request, FIPA Query, FIPA Request When, FIPA Contract Net, FIPA English Auction, FIPA Dutch Auction, FIPA Brokering Interaction, FIPA Recruiting Interaction, FIPA Subscribe Interaction și FIPA Propose Interaction. Specificațiile acestor protocoale se găsesc pe site-ul FIPA [17].</p>
+            </div>
+
+            <div class="table-container">
+                <div class="table-title">Fig. 2.13 Parametrii mesajelor FIPA ACL</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Parametru</th>
+                            <th>Categorie</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>performative</td><td>act de comunicare</td></tr>
+                        <tr><td>sender</td><td>participant la comunicare</td></tr>
+                        <tr><td>receiver</td><td>participant la comunicare</td></tr>
+                        <tr><td>reply-to</td><td>participant la comunicare</td></tr>
+                        <tr><td>content</td><td>descrierea conținutului</td></tr>
+                        <tr><td>language</td><td>descrierea conținutului</td></tr>
+                        <tr><td>encoding</td><td>descrierea conținutului</td></tr>
+                        <tr><td>ontology</td><td>descrierea conținutului</td></tr>
+                        <tr><td>protocol</td><td>controlul conversației</td></tr>
+                        <tr><td>conversation-id</td><td>controlul conversației</td></tr>
+                        <tr><td>reply-with</td><td>controlul conversației</td></tr>
+                        <tr><td>in-reply-to</td><td>controlul conversației</td></tr>
+                        <tr><td>reply-by</td><td>controlul conversației</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="text-content">
+                <p>Figura 2.14 prezintă două mesaje exprimate în FIPA ACL care reprezintă o parte a protocolului de cerere. Sunt reprezentate doar mesajul REQUEST și ultimul INFORM al protocolului de cerere. FIPA ACL vine în întâmpinarea unor dezavantaje ale KQML, în special asupra aspectelor formale și a existenței multor dialecte. Fiind definit de o organizație, este oarecum standardizat în multe aspecte legate de multiagenți.</p>
+            </div>
+
+            <div class="figure-container">
+                <div class="figure-title">Fig. 2.14 Exemple de mesaje FIPA ACL</div>
+                <div class="two-column-figure"> 
+                    <div class="code-example">
+(REQUEST
+<br>
+  &emsp;:<i>sender</i> ag1
+  <br>
+  &emsp;:<i>receiver</i> clusterMgAg
+  <br>
+  &emsp;:<i>content</i>
+  <br>
+    &emsp;&emsp;((joinCluster type robot))
+    <br>
+  &emsp;:<i>reply-with</i> joinCluster
+  <br>
+  &emsp;:<i>language</i> SLO
+  <br>
+  &emsp;:<i>ontology</i> agentOntology
+  <br>
+  &emsp;:<i>protocol</i> FIPA Request
+  <br>)
+                    </div>
+                    <div class="arrow">➤</div>
+                    <div class="code-example">
+(INFORM
+<br>
+  &emsp;:<i>sender</i> clusterMgAg
+  <br>
+  &emsp;:<i>receiver</i> ag1
+  <br>
+  &emsp;:<i>content</i>
+  <br>
+    &emsp;&emsp;((successfulJoin reason "join accepted"))
+    <br>
+  &emsp;:<i>in-reply-to</i> joinCluster
+  <br>
+  &emsp;:<i>language</i> SLO
+  <br>
+  &emsp;:<i>ontology</i> agentOntology
+  <br>
+  &emsp;:<i>protocol</i> FIPA Request
+  <br>)
+                    </div>
+                </div>
+            </div>
+
+            
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div style="text-align: center; margin: 2rem 0;">
+            <a href="#introducere" class="button">🔝 Înapoi la Început</a>
+            <a href="#top" class="button">🏠 Acasă</a>
+        </div>
+    </div>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Add some interactivity to buttons
+        document.querySelectorAll('.button').forEach(button => {
+            button.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-3px) scale(1.05)';
+            });
+            
+            button.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(-2px) scale(1)';
+            });
+        });
+
+        // Highlight active section in navbar
+        window.addEventListener('scroll', function() {
+            const sections = ['introducere', 'categorii', 'niveluri', 'kqml', 'probleme', 'fipa'];
+            const scrollPos = window.scrollY + 100;
+            
+            sections.forEach(section => {
+                const element = document.getElementById(section);
+                if (element) {
+                    const top = element.offsetTop;
+                    const height = element.offsetHeight;
+                    
+                    if (scrollPos >= top && scrollPos < top + height) {
+                        // Remove active class from all links
+                        document.querySelectorAll('.dropdown-content a').forEach(link => {
+                            link.style.background = '';
+                            link.style.fontWeight = '';
+                        });
+                        
+                        // Add active class to current section
+                        const activeLink = document.querySelector(`a[href="#${section}"]`);
+                        if (activeLink) {
+                            activeLink.style.background = '#e3f2fd';
+                            activeLink.style.fontWeight = 'bold';
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

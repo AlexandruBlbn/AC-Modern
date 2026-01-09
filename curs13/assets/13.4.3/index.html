@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>13.4.3 - Translation Lookaside Buffer (TLB)</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/lesson.css">
+</head>
+<body>
+    <article class="lesson-container">
+        <header class="lesson-header">
+            <span class="lesson-badge">Lecția 13.4.3</span>
+            <h1 class="lesson-title">Translation Lookaside Buffer (TLB)</h1>
+            <p class="lesson-subtitle">Cache-ul pentru traduceri de adrese</p>
+        </header>
+
+        <section class="section" id="problema">
+            <h2 class="section-title">Problema Performanței</h2>
+            <p class="text-content">
+                Fiecare acces la memorie necesită traducerea adresei virtuale în adresă fizică. 
+                Cu page tables pe 4 niveluri, aceasta ar necesita <strong>4 accesuri suplimentare 
+                la memorie</strong> pentru fiecare acces efectiv - o penalizare inacceptabilă!
+            </p>
+
+            <div class="info-box">
+                <p class="info-title">📊 Fără Optimizare</p>
+                <p>
+                    Un acces la date ar necesita: 4 accesuri pentru page walk + 1 acces pentru date 
+                    = <strong>5x timpul normal</strong>. Performanța ar scădea dramatic!
+                </p>
+            </div>
+            <figure class="figure">
+                <a href="../images/F78.png" target="_blank">
+                    <img src="../images/F78.png" alt="Exemplu de transfer DMA" class="figure-img medium">
+                </a>
+                <figcaption class="figure-caption">
+                    <strong>Figura 7.8:</strong> Exemplu de transfer DMA (DMAC = Controller DMA).
+                </figcaption>
+            </figure>
+        </section>
+
+        <section class="section" id="solutia-tlb">
+            <h2 class="section-title">Soluția: TLB</h2>
+
+            <div class="definition-box">
+                <p class="definition-label">Definiție</p>
+                <p class="definition-text">
+                    <strong>Translation Lookaside Buffer (TLB)</strong> este un cache specializat, 
+                    mic și rapid, care stochează traducerile recente Virtual Page Number (VPN) → 
+                    Physical Frame Number (PFN). Numit și "address-translation cache".
+                </p>
+            </div>
+
+            <div class="code-block">
+<pre>Fluxul de Traducere cu TLB:
+                                    ┌─────────────────┐
+                                    │ CACHE HIT       │
+                   ┌───────────────>│ PFN din TLB     │──────────┐
+                   │ HIT            └─────────────────┘          │
+┌──────────────┐   │                                             ▼
+│ Adresă       │───┴───>┌───────┐                    ┌───────────────────┐
+│ Virtuală     │        │  TLB  │                    │ Adresă Fizică     │
+│ (VPN+Offset) │───┬───>└───────┘                    │ (PFN + Offset)    │
+└──────────────┘   │                                 └───────────────────┘
+                   │ MISS           ┌─────────────────┐          ▲
+                   └───────────────>│ PAGE WALK       │──────────┘
+                                    │ (4 accesuri)    │
+                                    │ + Update TLB    │
+                                    └─────────────────┘</pre>
+            </div>
+
+            <p class="text-content">
+                Datorită localității, majoritatea traducerilor sunt găsite în TLB (hit rate tipic: 
+                <strong>95-99%</strong>), evitând costul page walk-ului.
+            </p>
+        </section>
+
+        <section class="section" id="structura-tlb">
+            <h2 class="section-title">Structura TLB</h2>
+            
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Caracteristică</th>
+                        <th>TLB Tipic</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Dimensiune</td><td>32-2048 intrări</td></tr>
+                    <tr><td>Asociativitate</td><td>Complet asociativ sau N-way (4-8)</td></tr>
+                    <tr><td>Timp acces</td><td>0.5-1 ciclu (L1 TLB)</td></tr>
+                    <tr><td>Structură</td><td>L1 iTLB + L1 dTLB + L2 TLB unificat</td></tr>
+                </tbody>
+            </table>
+
+            <h3>Intrare TLB</h3>
+            <div class="code-block">
+<pre>┌───────────────────────────────────────────────────────────────┐
+│ VPN (Virtual Page Number) │ PFN (Physical Frame) │ Permisiuni │
+│         20 biți           │      20 biți         │   V R W X  │
+└───────────────────────────────────────────────────────────────┘
+                                                    │ │ │ │ │
+                                                    │ │ │ │ └── Execute
+                                                    │ │ │ └──── eXecute disable
+                                                    │ │ └────── Write
+                                                    │ └──────── Read
+                                                    └────────── Valid</pre>
+            </div>
+
+            <div class="card-grid">
+                <div class="info-card">
+                    <div class="card-icon">📘</div>
+                    <h3 class="card-title">L1 iTLB</h3>
+                    <p class="card-text">
+                        TLB pentru instrucțiuni<br>
+                        32-128 intrări<br>
+                        Complet asociativ<br>
+                        Acces în 1 ciclu
+                    </p>
+                </div>
+                <div class="info-card">
+                    <div class="card-icon">📙</div>
+                    <h3 class="card-title">L1 dTLB</h3>
+                    <p class="card-text">
+                        TLB pentru date<br>
+                        32-128 intrări<br>
+                        4-8 way asociativ<br>
+                        Acces în 1 ciclu
+                    </p>
+                </div>
+                <div class="info-card">
+                    <div class="card-icon">📗</div>
+                    <h3 class="card-title">L2 TLB (STLB)</h3>
+                    <p class="card-text">
+                        Second-level unified<br>
+                        512-4096 intrări<br>
+                        6-12 way asociativ<br>
+                        Acces în 6-12 cicluri
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="tlb-miss">
+            <h2 class="section-title">TLB Miss Handling</h2>
+            
+            <p class="text-content">
+                Când o traducere nu este în TLB (TLB miss), trebuie făcut un <strong>page walk</strong> 
+                pentru a găsi traducerea în page table:
+            </p>
+
+            <div class="accordion">
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <span>⚙️ Hardware Page Walk (x86, ARM)</span>
+                        <span class="icon-plus">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p>
+                                MMU conține un <strong>hardware page walker</strong> care traversează 
+                                automat page table-ul. Procesorul poate continua execuția speculativă 
+                                în timpul page walk-ului.
+                            </p>
+                            <p><strong>Cost:</strong> 10-100 cicluri (depinde de niveluri și cache)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <span>🔧 Software TLB Miss (MIPS, SPARC)</span>
+                        <span class="icon-plus">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p>
+                                TLB miss generează o excepție, iar software-ul (OS kernel) traversează 
+                                page table și inserează traducerea în TLB.
+                            </p>
+                            <p><strong>Flexibilitate:</strong> Permite formate custom de page table</p>
+                            <p><strong>Cost:</strong> Mai mare (100+ cicluri)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="asid">
+            <h2 class="section-title">ASID (Address Space Identifier)</h2>
+            
+            <p class="text-content">
+                La schimbarea contextului între procese, TLB-ul ar trebui golit (toate traducerile 
+                sunt ale procesului vechi). <strong>ASID</strong> evită acest cost:
+            </p>
+
+            <div class="definition-box">
+                <p class="definition-label">Definiție</p>
+                <p class="definition-text">
+                    <strong>ASID</strong> este un identificator scurt (8-16 biți) asociat fiecărei 
+                    intrări TLB care identifică procesul. Traducerile cu ASID diferit nu se potrivesc, 
+                    permițând TLB-ului să păstreze traduceri de la mai multe procese simultan.
+                </p>
+            </div>
+
+            <div class="code-block">
+<pre>Intrare TLB cu ASID:
+┌───────────┬───────────┬───────────┬────────────┐
+│   ASID    │    VPN    │    PFN    │ Permisiuni │
+│  (8 biți) │ (44 biți) │ (44 biți) │            │
+└───────────┴───────────┴───────────┴────────────┘
+
+Match = (ASID_curent == ASID_intrare) AND (VPN_cerut == VPN_intrare)
+SAU (Global_bit == 1)  // pentru pagini kernel partajate</pre>
+            </div>
+        </section>
+
+        <section class="section" id="tlb-coherence">
+            <h2 class="section-title">TLB Coherency și Invalidare</h2>
+            
+            <p class="text-content">
+                Când page table-ul este modificat (de exemplu, o pagină este mutată sau are 
+                permisiunile schimbate), intrările TLB corespunzătoare trebuie invalidate:
+            </p>
+
+            <ul class="content-list">
+                <li><strong>TLB Flush:</strong> Golește întregul TLB (costisitor)</li>
+                <li><strong>INVLPG:</strong> Invalidează o singură pagină (x86)</li>
+                <li><strong>TLB Shootdown:</strong> Invalidare pe toate CPU-urile într-un sistem multiprocesor (foarte costisitor)</li>
+            </ul>
+
+            <div class="info-box info-blue">
+                <p class="info-title">⚠️ Atenție la Performanță</p>
+                <p>
+                    TLB shootdown în sisteme cu multe nuclee poate costa mii de cicluri și necesită 
+                    IPI (Inter-Processor Interrupts). Sisteme de operare moderne minimizează frecvența.
+                </p>
+            </div>
+        </section>
+
+        <section class="section" id="metrici">
+            <h2 class="section-title">Metrici de Performanță TLB</h2>
+            
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Metrică</th>
+                        <th>Valoare Tipică</th>
+                        <th>Impact</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>TLB Hit Rate</td><td>95-99.9%</td><td>Crucial pentru performanță</td></tr>
+                    <tr><td>TLB Hit Time</td><td>0.5-1 ciclu</td><td>Suprapus cu cache access</td></tr>
+                    <tr><td>TLB Miss Penalty</td><td>10-200 cicluri</td><td>Depinde de page walk</td></tr>
+                    <tr><td>Acoperire L1 TLB</td><td>64 × 4KB = 256 KB</td><td>Working set maxim rapid</td></tr>
+                    <tr><td>Acoperire L2 TLB</td><td>1536 × 4KB = 6 MB</td><td>Working set mai mare</td></tr>
+                </tbody>
+            </table>
+
+            <div class="info-box info-green">
+                <p class="info-title">💡 Huge Pages și TLB</p>
+                <p>
+                    Cu pagini de 2 MB în loc de 4 KB, fiecare intrare TLB acoperă 512x mai mult spațiu. 
+                    Acoperirea L1 TLB crește de la 256 KB la <strong>128 MB</strong>!
+                </p>
+            </div>
+        </section>
+
+        <section class="section" id="sumar">
+            <h2 class="section-title">Rezumat</h2>
+            <div class="info-box info-green">
+                <p class="info-title">📝 Puncte Cheie</p>
+                <ul class="content-list">
+                    <li><strong>TLB:</strong> Cache pentru traduceri VPN → PFN</li>
+                    <li>Evită costul page walk-ului pentru majoritatea accesurilor</li>
+                    <li>Hit rate tipic: 95-99%, esențial pentru performanță</li>
+                    <li><strong>ASID:</strong> Permite păstrarea traducerilor de la mai multe procese</li>
+                    <li>TLB invalidation/shootdown poate fi costisitor în sisteme multicore</li>
+                    <li>Huge pages cresc dramatic acoperirea TLB</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="section" id="final">
+            <h2 class="section-title">🎉 Felicitări!</h2>
+            <div class="info-box info-blue">
+                <p class="info-title">Ai finalizat Cursul 13!</p>
+                <p>
+                    Acum înțelegi principiile fundamentale ale ierarhiei de memorie, funcționarea 
+                    memoriei cache, optimizările de performanță și sistemul de memorie virtuală. 
+                    Aceste concepte sunt esențiale pentru înțelegerea arhitecturii calculatoarelor 
+                    moderne și pentru optimizarea software-ului.
+                </p>
+            </div>
+        </section>
+    </article>
+
+    <script>
+        document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const content = header.nextElementSibling;
+                const isExpanded = content.classList.contains('expanded');
+                header.classList.toggle('active', !isExpanded);
+                content.classList.toggle('expanded', !isExpanded);
+            });
+        });
+    </script>
+    <script src="../../js/lesson.js"></script>
+</body>
+</html>

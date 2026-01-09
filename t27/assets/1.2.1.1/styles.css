@@ -1,0 +1,141 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.container {
+      border: 1px solid #ccc;
+      border-radius: 1px;
+      overflow: hidden;
+     
+     
+}
+.subcontainer {
+      overflow: hidden;
+}
+.subcontainer:hover {
+  background-color: steelblue;  /* color when hovered */
+  color: white;  /* optional: change text color too */
+}
+
+.page-container {
+  display: flex;
+  align-items: flex-start; /* aligns both divs at top */
+  gap: 20px; /* space between sidebar and main */
+  padding: 0;
+  margin: 0;
+}
+
+.left-sidebar {
+  border-right: 1px solid #ccc;
+  width: 250px;
+  background-color: #ddd;
+  border-radius: 1px;
+  position: fixed;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1; /* take remaining horizontal space */
+  margin-left: 260px;  /* leave space for left sidebar */
+  margin-right: 250px;  /* leave space for left sidebar */
+  padding-right: 10px;
+  border-right: 1px solid #ccc; /* 4px black left border */
+}
+
+
+.dropdown-container {
+      border: 1px solid #ccc;
+      border-radius: 1px;
+      margin: 0.1em 0;
+      overflow: hidden;
+  
+}
+
+.dropdown-header {
+      background-color: #F5F5F5;
+      color: auto;
+      padding: 10px 15px;
+      cursor: pointer;
+      font-weight: bold;
+}
+
+.dropdown-content {
+      max-height: 0;
+      overflow: hidden;
+      transition:max-height 0.5s ease, opacity 0.5s ease;
+      background-color: #FFFFFF;
+      padding: 0 15px;
+}
+
+.dropdown-container.active .dropdown-content {
+      max-height: 500px; /* Adjust based on content */
+      padding: 15px;
+}
+
+
+@font-face {
+  font-family: 'UT Sans';
+  src: url('fonts/UTSans.ttf') format('truetype'); /* adjust path & format */
+}
+
+.heading-sidebar {
+  font-size: 1.8rem;
+  font-weight: bold;
+  font-family: 'UT Sans',  sans-serif;
+  color: auto;
+  text-align: center;
+  margin-bottom: 0.5em;
+  letter-spacing: 0.05em;
+}
+
+.chapter-sidebar {
+  font-size: 1rem;
+  font-family: 'UT Sans',  sans-serif;
+  color: auto;
+  padding-left: 2px;
+ 
+}
+
+.subchapter-sidebar {
+  font-size: 0.75rem;
+  font-family: 'UT Sans',  sans-serif;
+  color: auto;
+  padding-left: 15px;
+}
+
+.heading-main {
+  font-size: 2rem;
+  font-weight: bold;
+  font-family: 'UT Sans',  sans-serif;
+  color: auto;
+  margin-bottom: 0.5em;
+  letter-spacing: 0.05em;
+}
+
+.text-main {
+     font-family: 'UT Sans',  sans-serif; 
+     text-align: justify; 
+     font-weight: 300;
+}
+
+.navigation-arrows {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid #ccc;
+}
+
+.arrow {
+  font-size: 1.2rem;
+  text-decoration: none;
+  color: #007bff;
+  font-weight: bold;
+  transition: color 0.2s;
+}
+
+.arrow:hover {
+  color: #0056b3;
+}

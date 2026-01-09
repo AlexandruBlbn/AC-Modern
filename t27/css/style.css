@@ -1,0 +1,172 @@
+body {
+  background-color: #E8E8E8;
+  overflow: hidden;
+}
+.grid-container {
+  display: grid;
+  grid-template-columns: 310px 1fr;
+  grid-template-rows: 1fr 33px;
+  grid-template-areas:
+    "sidebar main"
+    "footer footer";
+  height: 100vh;
+  padding: 1rem;
+  gap: 1rem;
+}
+.grid-container.sidebar-collapsed {
+  grid-template-columns: 80px 1fr;
+}
+.sidebar {
+  grid-area: sidebar;
+}
+.main-content {
+  grid-area: main;
+}
+.footer {
+  grid-area: footer;
+}
+.sidebar,
+.main-content,
+.footer {
+  display: flex;
+  flex-direction: column;
+}
+.sidebar .card,
+.main-content .card,
+.footer .card {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content .card {
+  overflow: hidden;
+}
+
+.sidebar .card .card-body,
+.main-content .card .card-body,
+.footer .card .card-body {
+  overflow: hidden; 
+}
+.sidebar .card .card-body {
+  flex-grow: 1;
+}
+
+.main-content .card-body iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.sidebar .card-header,
+.sidebar .card-footer,
+.main-content .card-footer {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.sidebar .card-footer {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.list-group-item:focus {
+  box-shadow: none;
+}
+
+.list-group-item.active {
+  background-color: #6b9eff;
+  border-color: #6b9eff;
+  color: #fff;
+}
+
+.chapter-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #cfe2ff;
+  color: #212529;
+  border-color: rgba(0, 0, 0, 0.125);
+}
+.chapter-toggle:hover {
+  background-color: #cfe2ff;
+}
+
+.chapter-toggle.locked {
+  background-color: #cfe2ff;
+  color: #adb5bd;
+  cursor: not-allowed;
+}
+.chapter-toggle.locked:hover {
+  background-color: #cfe2ff;
+}
+.chapter-toggle.locked .bi-lock-fill {
+  font-size: 0.9rem;
+}
+.chapter-toggle:not(.locked) .bi-lock-fill {
+  display: none;
+}
+
+.link-short-text,
+.header-short-text {
+  display: none;
+}
+.sidebar-collapsed .link-full-text,
+.sidebar-collapsed .header-full-text,
+.sidebar-collapsed .button-text {
+  display: none;
+}
+.sidebar-collapsed .header-short-text,
+.sidebar-collapsed .link-short-text {
+  display: inline-block;
+}
+
+.sidebar-collapsed .sidebar .list-group-item,
+.sidebar-collapsed .sidebar .card-header {
+  text-align: center;
+  justify-content: center;
+}
+
+.sidebar-collapsed .list-group-item.ps-4 {
+  display: flex;
+  justify-content: center;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.sidebar-collapsed .chapter-toggle.locked .bi-lock-fill {
+  margin: auto;
+}
+.sidebar-collapsed .card-footer .btn {
+  justify-content: center;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
+}
+.modal-content-custom {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+#fireworks-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1060;
+  pointer-events: none;
+}
