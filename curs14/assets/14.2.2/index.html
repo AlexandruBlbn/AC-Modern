@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>14.2.2 - Mapare Directă</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/lesson.css">
+</head>
+<body>
+    <article class="lesson-container">
+        <header class="lesson-header">
+            <span class="lesson-badge">Lecția 14.2.2</span>
+            <h1 class="lesson-title">Mapare Directă</h1>
+            <p class="lesson-subtitle">Cea mai simplă metodă de organizare a memoriei cache</p>
+        </header>
+
+        <section class="section" id="introducere">
+            <h2 class="section-title">Ce este Maparea Directă?</h2>
+            <p class="text-content">
+                <strong>Maparea directă</strong> (Direct-Mapped Cache) este cea mai simplă schemă 
+                de organizare a cache-ului, în care fiecare bloc din memoria principală poate fi 
+                stocat într-o singură locație predeterminată în cache.
+            </p>
+
+            <div class="definition-box">
+                <p class="definition-label">Definiție</p>
+                <p class="definition-text">
+                    Într-un cache cu mapare directă, locația (indexul) în care poate fi plasat 
+                    un bloc de memorie este determinată unic de adresa acelui bloc, folosind 
+                    formula: <code class="code-inline">Index = (Adresa bloc) mod (Număr linii cache)</code>
+                </p>
+            </div>
+        </section>
+
+        <section class="section" id="principiu">
+            <h2 class="section-title">Principiul de Funcționare</h2>
+            
+            <p class="text-content">
+                În maparea directă, adresa de memorie este împărțită în trei câmpuri:
+            </p>
+
+            <div class="code-block">
+<pre>Exemplu: Cache 4 KB, linie 64 bytes, adresă 32 biți
+
+Adresa (32 biți):
+┌──────────────────┬────────────┬─────────────┐
+│    TAG (20 biți) │ INDEX (6 b)│ OFFSET (6 b)│
+└──────────────────┴────────────┴─────────────┘
+
+Calcule:
+- Număr linii = 4 KB / 64 bytes = 64 linii
+- Biți pentru index = log₂(64) = 6 biți
+- Biți pentru offset = log₂(64) = 6 biți  
+- Biți pentru tag = 32 - 6 - 6 = 20 biți</pre>
+            </div>
+
+            <div class="info-box info-blue">
+                <p class="info-title">🔍 Exemplu de Mapare</p>
+                <p>
+                    Cu 64 de linii de cache, blocurile de memorie cu adresele 0, 64, 128, 192, ... 
+                    toate se mapează la <strong>linia 0</strong>. Blocurile cu adresele 1, 65, 129, 193, ... 
+                    se mapează la <strong>linia 1</strong>, etc.
+                </p>
+            </div>
+        </section>
+
+        <section class="section" id="algoritm">
+            <h2 class="section-title">Algoritmul de Acces</h2>
+            
+            <p class="text-content">
+                Când procesorul solicită o adresă, cache-ul cu mapare directă execută:
+            </p>
+
+            <ol class="content-list numbered">
+                <li><strong>Extrage indexul</strong> din adresă și selectează linia corespunzătoare</li>
+                <li><strong>Compară tag-ul</strong> din adresă cu tag-ul stocat în linia selectată</li>
+                <li><strong>Verifică bitul valid</strong> al liniei</li>
+                <li>Dacă tag-urile coincid și bitul valid este 1 → <strong>HIT</strong></li>
+                <li>Altfel → <strong>MISS</strong>, aduce blocul și înlocuiește linia existentă</li>
+            </ol>
+
+            <div class="code-block">
+<pre>// Pseudocod pentru accesul la cache cu mapare directă
+function cache_access(address):
+    index = extract_index(address)
+    tag = extract_tag(address)
+    offset = extract_offset(address)
+    
+    line = cache[index]
+    
+    if (line.valid == 1) AND (line.tag == tag):
+        // CACHE HIT
+        return line.data[offset]
+    else:
+        // CACHE MISS
+        block = fetch_from_memory(address)
+        line.data = block
+        line.tag = tag
+        line.valid = 1
+        return block[offset]</pre>
+            </div>
+        </section>
+
+        <section class="section" id="exemplu">
+            <h2 class="section-title">Exemplu Detaliat</h2>
+            
+            <p class="text-content">
+                Să considerăm un cache cu mapare directă cu următoarele caracteristici:
+            </p>
+
+            <table class="data-table">
+                <tr><td><strong>Dimensiune cache</strong></td><td>1 KB (1024 bytes)</td></tr>
+                <tr><td><strong>Dimensiune linie</strong></td><td>16 bytes</td></tr>
+                <tr><td><strong>Număr linii</strong></td><td>64 (1024 / 16)</td></tr>
+                <tr><td><strong>Adresă</strong></td><td>16 biți</td></tr>
+            </table>
+
+            <p class="text-content">
+                Împărțirea adresei:
+            </p>
+            <ul class="content-list">
+                <li><strong>Offset:</strong> log₂(16) = 4 biți (selectează byte-ul în linie)</li>
+                <li><strong>Index:</strong> log₂(64) = 6 biți (selectează linia)</li>
+                <li><strong>Tag:</strong> 16 - 4 - 6 = 6 biți (identifică blocul)</li>
+            </ul>
+
+            <div class="info-box">
+                <p class="info-title">📊 Secvență de Accesuri</p>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Adresa (hex)</th>
+                            <th>Tag</th>
+                            <th>Index</th>
+                            <th>Offset</th>
+                            <th>Rezultat</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>0x0000</td><td>0</td><td>0</td><td>0</td><td>Miss (cache gol)</td></tr>
+                        <tr><td>0x0004</td><td>0</td><td>0</td><td>4</td><td>Hit (aceeași linie)</td></tr>
+                        <tr><td>0x0010</td><td>0</td><td>1</td><td>0</td><td>Miss (linie nouă)</td></tr>
+                        <tr><td>0x0400</td><td>1</td><td>0</td><td>0</td><td>Miss (conflict, înlocuire)</td></tr>
+                        <tr><td>0x0000</td><td>0</td><td>0</td><td>0</td><td>Miss (a fost înlocuit)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="section" id="avantaje-dezavantaje">
+            <h2 class="section-title">Avantaje și Dezavantaje</h2>
+
+            <div class="card-grid">
+                <div class="info-card">
+                    <div class="card-icon">✅</div>
+                    <h3 class="card-title">Avantaje</h3>
+                    <p class="card-text">
+                        • Implementare simplă și rapidă<br>
+                        • Hardware minimal (o singură comparație)<br>
+                        • Timp de acces deterministic<br>
+                        • Cost redus<br>
+                        • Consum de energie mic
+                    </p>
+                </div>
+                <div class="info-card">
+                    <div class="card-icon">❌</div>
+                    <h3 class="card-title">Dezavantaje</h3>
+                    <p class="card-text">
+                        • <strong>Conflicte frecvente</strong> (conflict misses)<br>
+                        • Performanță slabă pentru anumite pattern-uri<br>
+                        • Blocuri care se mapează la aceeași linie se înlocuiesc reciproc<br>
+                        • Nu poate exploata toate liniile disponibile
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="conflicte">
+            <h2 class="section-title">Problema Conflictelor</h2>
+            
+            <p class="text-content">
+                Principala problemă a mapării directe este apariția <strong>conflict miss-urilor</strong>. 
+                Acestea apar când două sau mai multe blocuri frecvent accesate se mapează la aceeași linie, 
+                înlocuindu-se reciproc.
+            </p>
+
+            <div class="info-box info-blue">
+                <p class="info-title">💡 Exemplu Clasic: Thrashing</p>
+                <p>
+                    Dacă un program accesează alternativ array-uri <code class="code-inline">A</code> și 
+                    <code class="code-inline">B</code> care se mapează la aceeași linie:
+                </p>
+                <div class="code-block">
+<pre>for (i = 0; i < N; i++) {
+    suma += A[i] + B[i];  // Dacă A[i] și B[i] au același index
+}                          // → fiecare acces e MISS!</pre>
+                </div>
+                <p>
+                    Chiar dacă cache-ul are loc pentru ambele, ele se înlocuiesc continuu, 
+                    rezultând 0% hit rate pentru aceste accesuri.
+                </p>
+            </div>
+
+            <p class="text-content">
+                Soluția pentru conflicte este creșterea <strong>asociativității</strong>, 
+                permițând unui bloc să fie stocat în mai multe locații posibile.
+            </p>
+        </section>
+
+        <section class="section" id="sumar">
+            <h2 class="section-title">Rezumat</h2>
+            <div class="info-box info-green">
+                <p class="info-title">📝 Puncte Cheie</p>
+                <ul class="content-list">
+                    <li>Maparea directă: fiecare bloc are o singură locație posibilă în cache</li>
+                    <li>Formula: Index = Adresa mod Număr_linii</li>
+                    <li>Adresa = Tag + Index + Offset</li>
+                    <li>Avantaje: simplă, rapidă, ieftină</li>
+                    <li>Dezavantaj major: conflict miss-uri când blocuri diferite competă pentru aceeași linie</li>
+                </ul>
+            </div>
+        </section>
+    </article>
+
+    <script>
+        document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const content = header.nextElementSibling;
+                const isExpanded = content.classList.contains('expanded');
+                header.classList.toggle('active', !isExpanded);
+                content.classList.toggle('expanded', !isExpanded);
+            });
+        });
+    </script>
+    <script src="../../js/lesson.js"></script>
+</body>
+</html>

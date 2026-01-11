@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>14.2.1 - Structura Cache-ului</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/lesson.css">
+</head>
+<body>
+    <article class="lesson-container">
+        <header class="lesson-header">
+            <span class="lesson-badge">Lecția 14.2.1</span>
+            <h1 class="lesson-title">Structura Cache-ului</h1>
+            <p class="lesson-subtitle">Componentele și organizarea internă a memoriei cache</p>
+        </header>
+
+        <section class="section" id="introducere">
+            <h2 class="section-title">Ce este Memoria Cache?</h2>
+            <p class="text-content">
+                <strong>Memoria cache</strong> este o memorie rapidă și de mici dimensiuni situată 
+                între procesor și memoria principală. Rolul său este de a păstra copii ale datelor 
+                frecvent accesate, reducând astfel timpul mediu de acces la memorie.
+            </p>
+
+            <div class="definition-box">
+                <p class="definition-label">Definiție</p>
+                <p class="definition-text">
+                    Cache-ul este o memorie SRAM (Static RAM) transparentă pentru software, care 
+                    stochează temporar date și instrucțiuni preluate din memoria principală, 
+                    anticipând că acestea vor fi solicitate din nou în viitorul apropiat.
+                </p>
+            </div>
+            <figure class="figure">
+                <a href="../images/F72.png" target="_blank">
+                    <img src="../images/F72.png" alt="Organizare ierarhică a magistralelor" class="figure-img medium">
+                </a>
+                <figcaption class="figure-caption">
+                    <strong>Figura 7.2:</strong> Exemplu de organizare ierarhică a magistralelor calculatorului.
+                </figcaption>
+            </figure>
+
+            <p class="text-content">
+                Denumirea "cache" vine din franceză și înseamnă "ascunzătoare" sau "loc de stocare". 
+                Această memorie este "ascunsă" programatorului - funcționează automat fără intervenția 
+                explicită a software-ului.
+            </p>
+        </section>
+
+        <section class="section" id="componente">
+            <h2 class="section-title">Componentele Cache-ului</h2>
+            
+            <p class="text-content">
+                O memorie cache este organizată în <strong>linii de cache</strong> (cache lines), 
+                fiecare linie conținând mai multe componente esențiale:
+            </p>
+
+            <div class="card-grid">
+                <div class="info-card">
+                    <div class="card-icon">🏷️</div>
+                    <h3 class="card-title">Tag (Etichetă)</h3>
+                    <p class="card-text">
+                        Identifică unic adresa din memoria principală din care provin datele. 
+                        Este folosit pentru a verifica dacă datele căutate sunt în cache.
+                    </p>
+                </div>
+                <div class="info-card">
+                    <div class="card-icon">📊</div>
+                    <h3 class="card-title">Bloc de Date</h3>
+                    <p class="card-text">
+                        Conține datele efective copiate din memorie. Dimensiunea tipică 
+                        este de 32-128 bytes, conținând mai multe cuvinte.
+                    </p>
+                </div>
+                <div class="info-card">
+                    <div class="card-icon">✓</div>
+                    <h3 class="card-title">Bit Valid</h3>
+                    <p class="card-text">
+                        Indică dacă linia de cache conține date valide. La pornire, 
+                        toate bitii valid sunt 0 (cache gol).
+                    </p>
+                </div>
+                <div class="info-card">
+                    <div class="card-icon">✏️</div>
+                    <h3 class="card-title">Bit Dirty (Modificat)</h3>
+                    <p class="card-text">
+                        Indică dacă datele au fost modificate și diferă de copia din 
+                        memoria principală (folosit în write-back).
+                    </p>
+                </div>
+            </div>
+            <figure class="figure">
+                <a href="../images/F73.png" target="_blank">
+                    <img src="../images/F73.png" alt="Organizare ierarhică cu magistrală mezanin" class="figure-img medium">
+                </a>
+                <figcaption class="figure-caption">
+                    <strong>Figura 7.3:</strong> Exemplu de organizare ierarhică a magistralelor la care se introduce magistrala de mare viteză “de la mezanin”.
+                </figcaption>
+            </figure>
+        </section>
+
+        <section class="section" id="linie-cache">
+            <h2 class="section-title">Structura unei Linii de Cache</h2>
+            
+            <div class="info-box info-blue">
+                <p class="info-title">📐 Exemplu: Linie de Cache de 64 bytes</p>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Valid (1 bit)</th>
+                            <th>Dirty (1 bit)</th>
+                            <th>Tag (20-30 biți)</th>
+                            <th>Date (64 bytes = 512 biți)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>0x3A5F2</td>
+                            <td>[date copiate din memorie]</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p class="text-content">
+                Când procesorul solicită o adresă, aceasta este împărțită în trei părți:
+            </p>
+
+            <div class="code-block">
+<pre>Adresa de memorie (32 biți exemplu):
+┌─────────────────┬───────────────┬─────────────┐
+│   TAG (20 biți) │ INDEX (6 biți)│ OFFSET (6 b)│
+└─────────────────┴───────────────┴─────────────┘
+       ↓                  ↓              ↓
+   Identifică         Selectează      Selectează
+   blocul din         linia în        byte-ul în
+   memorie            cache           linia cache</pre>
+            </div>
+
+            <ul class="content-list">
+                <li><strong>Tag:</strong> Identifică sursa datelor (partea superioară a adresei)</li>
+                <li><strong>Index:</strong> Selectează setul sau linia în cache</li>
+                <li><strong>Offset:</strong> Selectează byte-ul specific din linia de cache</li>
+            </ul>
+        </section>
+
+        <section class="section" id="dimensiuni">
+            <h2 class="section-title">Parametri de Proiectare</h2>
+            
+            <p class="text-content">
+                Performanța unui cache depinde de mai mulți parametri de proiectare:
+            </p>
+
+            <div class="accordion">
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <span>📏 Dimensiunea Totală</span>
+                        <span class="icon-plus">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p>
+                                Capacitatea totală a cache-ului (ex: 32 KB, 256 KB, 8 MB). 
+                                Cache-uri mai mari au rate de hit mai bune, dar sunt mai lente 
+                                și consumă mai multă energie. Există un punct de diminishing returns.
+                            </p>
+                            <p><strong>Tipic:</strong> L1: 32-64 KB, L2: 256 KB-1 MB, L3: 4-64 MB</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <span>📦 Dimensiunea Liniei (Block Size)</span>
+                        <span class="icon-plus">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p>
+                                Cantitatea de date transferate între cache și memorie la un acces. 
+                                Linii mai mari exploatează mai bine localitatea spațială, dar 
+                                pot introduce date inutile și cresc penalizarea la miss.
+                            </p>
+                            <p><strong>Tipic:</strong> 32-128 bytes (cel mai comun: 64 bytes)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <span>🔢 Asociativitatea</span>
+                        <span class="icon-plus">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p>
+                                Numărul de locații în care un bloc poate fi plasat. 
+                                Determină flexibilitatea și complexitatea cache-ului.
+                            </p>
+                            <ul>
+                                <li><strong>Mapare directă:</strong> 1 locație posibilă</li>
+                                <li><strong>Set-asociativ:</strong> N locații (2, 4, 8, 16-way)</li>
+                                <li><strong>Complet asociativ:</strong> Orice locație</li>
+                            </ul>
+                            <p><strong>Tipic:</strong> L1: 4-8 way, L2: 8-16 way, L3: 16-20 way</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <span>✍️ Politica de Scriere</span>
+                        <span class="icon-plus">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p>Determină cum sunt gestionate scrierile:</p>
+                            <ul>
+                                <li><strong>Write-through:</strong> Scrie simultan în cache și memorie</li>
+                                <li><strong>Write-back:</strong> Scrie doar în cache, actualizează memoria la evacuare</li>
+                            </ul>
+                            <p><strong>La miss de scriere:</strong></p>
+                            <ul>
+                                <li><strong>Write-allocate:</strong> Aduce blocul în cache, apoi scrie</li>
+                                <li><strong>No-write-allocate:</strong> Scrie direct în memorie</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="functionare">
+            <h2 class="section-title">Funcționarea de Bază</h2>
+            
+            <p class="text-content">
+                Când procesorul accesează memoria, cache-ul execută următorii pași:
+            </p>
+
+            <ol class="content-list numbered">
+                <li>Extrage <strong>indexul</strong> din adresă pentru a localiza setul</li>
+                <li>Compară <strong>tag-ul</strong> adresei cu tag-urile liniilor din set</li>
+                <li>Verifică bitul <strong>valid</strong> al liniei cu tag potrivit</li>
+                <li>Dacă match (hit): returnează datele folosind offset-ul</li>
+                <li>Dacă nu (miss): aduce blocul din nivelul inferior și îl stochează</li>
+            </ol>
+
+            <div class="card-grid">
+                <div class="info-card">
+                    <div class="card-icon">✅</div>
+                    <h3 class="card-title">Cache Hit</h3>
+                    <p class="card-text">
+                        Datele sunt găsite în cache. Accesul este rapid 
+                        (1-4 cicluri pentru L1). Aceasta este situația dorită.
+                    </p>
+                </div>
+                <div class="info-card">
+                    <div class="card-icon">❌</div>
+                    <h3 class="card-title">Cache Miss</h3>
+                    <p class="card-text">
+                        Datele nu sunt în cache. Trebuie aduse din nivelul 
+                        inferior (L2, L3 sau RAM), ceea ce durează mult mai mult.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="sumar">
+            <h2 class="section-title">Rezumat</h2>
+            <div class="info-box info-green">
+                <p class="info-title">📝 Puncte Cheie</p>
+                <ul class="content-list">
+                    <li>Cache-ul conține linii cu: tag, date, bit valid, bit dirty</li>
+                    <li>Adresa este împărțită în: tag, index, offset</li>
+                    <li>Parametri de proiectare: dimensiune, mărime linie, asociativitate, politică scriere</li>
+                    <li>Cache hit = date găsite, Cache miss = date lipsă</li>
+                    <li>Cache-ul funcționează transparent pentru software</li>
+                </ul>
+            </div>
+        </section>
+    </article>
+
+    <script>
+        document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const content = header.nextElementSibling;
+                const isExpanded = content.classList.contains('expanded');
+                header.classList.toggle('active', !isExpanded);
+                content.classList.toggle('expanded', !isExpanded);
+            });
+        });
+    </script>
+    <script src="../../js/lesson.js"></script>
+</body>
+</html>

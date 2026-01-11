@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>14.1.3 - Niveluri de Memorie</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/lesson.css">
+</head>
+<body>
+    <article class="lesson-container">
+        <header class="lesson-header">
+            <span class="lesson-badge">Lecția 14.1.3</span>
+            <h1 class="lesson-title">Niveluri de Memorie</h1>
+            <p class="lesson-subtitle">Structura completă a ierarhiei de memorie în sistemele moderne</p>
+        </header>
+
+        <section class="section" id="structura">
+            <h2 class="section-title">Structura Ierarhiei</h2>
+            <p class="text-content">
+                Ierarhia de memorie în sistemele moderne este organizată pe <strong>5-6 niveluri</strong>, 
+                de la registrele procesorului până la stocarea pe disc. Fiecare nivel are caracteristici 
+                specifice care influențează performanța globală a sistemului.
+            </p>
+            
+            <p class="text-content">
+                Pe măsură ce ne deplasăm de sus în jos în ierarhie, observăm:
+            </p>
+            <ul class="content-list">
+                <li>Capacitatea <strong>crește</strong> exponențial</li>
+                <li>Timpul de acces <strong>crește</strong> semnificativ</li>
+                <li>Costul per bit <strong>scade</strong> dramatic</li>
+                <li>Lățimea de bandă <strong>scade</strong> (de obicei)</li>
+            </ul>
+        </section>
+
+        <section class="section" id="niveluri">
+            <h2 class="section-title">Nivelurile Ierarhiei</h2>
+
+            <div class="accordion">
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <span>📍 Nivel 0: Registrele Procesorului</span>
+                        <span class="icon-plus">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <table class="data-table">
+                                <tr><td><strong>Capacitate</strong></td><td>~1 KB (32-128 registre × 64 biți)</td></tr>
+                                <tr><td><strong>Timp acces</strong></td><td>~0.25-0.5 ns (1 ciclu)</td></tr>
+                                <tr><td><strong>Tehnologie</strong></td><td>SRAM (flip-flops)</td></tr>
+                                <tr><td><strong>Gestionare</strong></td><td>Compilator și hardware</td></tr>
+                            </table>
+                            <p class="text-content">
+                                Registrele sunt cele mai rapide și mai scumpe elemente de stocare. 
+                                Sunt integrate direct în nucleul procesorului și accesul la ele 
+                                nu introduce nicio latență suplimentară.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <span>⚡ Nivel 1: Cache L1</span>
+                        <span class="icon-plus">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <table class="data-table">
+                                <tr><td><strong>Capacitate</strong></td><td>32-64 KB per nucleu</td></tr>
+                                <tr><td><strong>Timp acces</strong></td><td>~1-4 ns (3-4 cicluri)</td></tr>
+                                <tr><td><strong>Tehnologie</strong></td><td>SRAM</td></tr>
+                                <tr><td><strong>Structură</strong></td><td>Separat: L1i (instrucțiuni) + L1d (date)</td></tr>
+                            </table>
+                            <p class="text-content">
+                                Cache-ul L1 este cel mai apropiat de nucleul procesorului. Este 
+                                împărțit în cache pentru instrucțiuni (L1i) și cache pentru date (L1d) 
+                                pentru a permite accesul simultan la instrucțiuni și date.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <span>🔵 Nivel 2: Cache L2</span>
+                        <span class="icon-plus">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <table class="data-table">
+                                <tr><td><strong>Capacitate</strong></td><td>256 KB - 1 MB per nucleu</td></tr>
+                                <tr><td><strong>Timp acces</strong></td><td>~4-14 ns (10-20 cicluri)</td></tr>
+                                <tr><td><strong>Tehnologie</strong></td><td>SRAM</td></tr>
+                                <tr><td><strong>Structură</strong></td><td>Unificat (instrucțiuni + date)</td></tr>
+                            </table>
+                            <p class="text-content">
+                                Cache-ul L2 oferă un compromis între viteza L1 și capacitatea L3. 
+                                Este de obicei privat pentru fiecare nucleu în procesoarele moderne 
+                                multi-core.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <span>🟢 Nivel 3: Cache L3</span>
+                        <span class="icon-plus">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <table class="data-table">
+                                <tr><td><strong>Capacitate</strong></td><td>4 MB - 64+ MB (partajat)</td></tr>
+                                <tr><td><strong>Timp acces</strong></td><td>~20-50 ns (30-70 cicluri)</td></tr>
+                                <tr><td><strong>Tehnologie</strong></td><td>SRAM</td></tr>
+                                <tr><td><strong>Structură</strong></td><td>Partajat între toate nucleele</td></tr>
+                            </table>
+                            <p class="text-content">
+                                Cache-ul L3 (Last Level Cache - LLC) este partajat între toate 
+                                nucleele procesorului. Servește ca ultimă linie de apărare înainte 
+                                de accesul la memoria principală și facilitează comunicarea între nuclee.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <span>💾 Nivel 4: Memoria Principală (RAM)</span>
+                        <span class="icon-plus">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <table class="data-table">
+                                <tr><td><strong>Capacitate</strong></td><td>8 GB - 1 TB+</td></tr>
+                                <tr><td><strong>Timp acces</strong></td><td>~50-100 ns</td></tr>
+                                <tr><td><strong>Tehnologie</strong></td><td>DRAM (DDR4, DDR5)</td></tr>
+                                <tr><td><strong>Gestionare</strong></td><td>Sistem de operare + hardware</td></tr>
+                            </table>
+                            <p class="text-content">
+                                Memoria DRAM oferă capacitate mare la cost rezonabil. Este volatilă 
+                                (pierde datele la oprirea alimentării) și necesită refresh periodic.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <span>📀 Nivel 5: Stocare Secundară (SSD/HDD)</span>
+                        <span class="icon-plus">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <table class="data-table">
+                                <tr><td><strong>Capacitate</strong></td><td>256 GB - 20+ TB</td></tr>
+                                <tr><td><strong>Timp acces</strong></td><td>SSD: ~0.1 ms / HDD: ~5-10 ms</td></tr>
+                                <tr><td><strong>Tehnologie</strong></td><td>Flash NAND / Magnetic</td></tr>
+                                <tr><td><strong>Persistență</strong></td><td>Non-volatilă</td></tr>
+                            </table>
+                            <p class="text-content">
+                                Stocarea secundară este folosită pentru persistența datelor și 
+                                pentru memoria virtuală (swap). SSD-urile sunt de ~100x mai rapide 
+                                decât HDD-urile pentru acces aleatoriu.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="comparatie">
+            <h2 class="section-title">Comparație Completă</h2>
+            
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Nivel</th>
+                        <th>Capacitate</th>
+                        <th>Latență</th>
+                        <th>Cost/GB</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Registre</td>
+                        <td>~1 KB</td>
+                        <td>0.5 ns</td>
+                        <td>N/A</td>
+                    </tr>
+                    <tr>
+                        <td>L1 Cache</td>
+                        <td>32-64 KB</td>
+                        <td>1-4 ns</td>
+                        <td>~$1000+</td>
+                    </tr>
+                    <tr>
+                        <td>L2 Cache</td>
+                        <td>256 KB - 1 MB</td>
+                        <td>4-14 ns</td>
+                        <td>~$100+</td>
+                    </tr>
+                    <tr>
+                        <td>L3 Cache</td>
+                        <td>4-64 MB</td>
+                        <td>20-50 ns</td>
+                        <td>~$10+</td>
+                    </tr>
+                    <tr>
+                        <td>RAM</td>
+                        <td>8 GB - 1 TB</td>
+                        <td>50-100 ns</td>
+                        <td>~$3-5</td>
+                    </tr>
+                    <tr>
+                        <td>SSD</td>
+                        <td>256 GB - 8 TB</td>
+                        <td>~100,000 ns</td>
+                        <td>~$0.10</td>
+                    </tr>
+                    <tr>
+                        <td>HDD</td>
+                        <td>1 TB - 20 TB</td>
+                        <td>~10,000,000 ns</td>
+                        <td>~$0.02</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="section" id="incluziune">
+            <h2 class="section-title">Politici de Incluziune</h2>
+            
+            <p class="text-content">
+                Relația între nivelurile cache poate urma diferite politici:
+            </p>
+
+            <div class="card-grid">
+                <div class="info-card">
+                    <div class="card-icon">📦</div>
+                    <h3 class="card-title">Inclusiv</h3>
+                    <p class="card-text">
+                        Toate datele din L1 sunt și în L2. L2 conține o copie a tot ce este în L1. 
+                        Simplifică coerența, dar reduce capacitatea efectivă.
+                    </p>
+                </div>
+                <div class="info-card">
+                    <div class="card-icon">🔀</div>
+                    <h3 class="card-title">Exclusiv</h3>
+                    <p class="card-text">
+                        Datele sunt într-un singur nivel la un moment dat. Maximizează capacitatea 
+                        totală, dar complică gestionarea.
+                    </p>
+                </div>
+                <div class="info-card">
+                    <div class="card-icon">📋</div>
+                    <h3 class="card-title">NINE</h3>
+                    <p class="card-text">
+                        Non-Inclusive Non-Exclusive - fără garanții stricte. Compromis între 
+                        cele două, folosit frecvent în L3.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="sumar">
+            <h2 class="section-title">Rezumat</h2>
+            <div class="info-box info-green">
+                <p class="info-title">📝 Puncte Cheie</p>
+                <ul class="content-list">
+                    <li>Ierarhia modernă are 5-6 niveluri: registre → L1 → L2 → L3 → RAM → Disc</li>
+                    <li>Capacitatea crește și viteza scade pe măsură ce coborâm în ierarhie</li>
+                    <li>L1 este separat (instrucțiuni/date), L2/L3 sunt unificate</li>
+                    <li>L3 este partajat între nuclee și facilitează comunicarea</li>
+                    <li>Diferența de viteză între L1 și RAM este de ~50-100x</li>
+                </ul>
+            </div>
+        </section>
+    </article>
+
+    <script>
+        document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const content = header.nextElementSibling;
+                const isExpanded = content.classList.contains('expanded');
+                header.classList.toggle('active', !isExpanded);
+                content.classList.toggle('expanded', !isExpanded);
+            });
+        });
+    </script>
+    <script src="../../js/lesson.js"></script>
+</body>
+</html>

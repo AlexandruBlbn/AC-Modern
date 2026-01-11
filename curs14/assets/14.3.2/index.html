@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>14.3.2 - Tipuri de Miss-uri</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/lesson.css">
+</head>
+<body>
+    <article class="lesson-container">
+        <header class="lesson-header">
+            <span class="lesson-badge">Lecția 14.3.2</span>
+            <h1 class="lesson-title">Tipuri de Miss-uri</h1>
+            <p class="lesson-subtitle">Clasificarea "3 C" a miss-urilor de cache</p>
+        </header>
+
+        <section class="section" id="introducere">
+            <h2 class="section-title">Modelul "3 C"</h2>
+            <p class="text-content">
+                Pentru a înțelege și optimiza performanța cache-ului, miss-urile sunt clasificate 
+                în trei categorii principale, cunoscute ca <strong>modelul 3 C</strong> (Three C's model), 
+                propus de Mark Hill. Înțelegerea cauzelor miss-urilor permite alegerea strategiilor 
+                optime de optimizare.
+            </p>
+            <figure class="figure">
+                <a href="../images/F75.png" target="_blank">
+                    <img src="../images/F75.png" alt="Handshaking inițiat de sursă" class="figure-img medium">
+                </a>
+                <figcaption class="figure-caption">
+                    <strong>Figura 7.5:</strong> Diagrama bloc şi evoluţia semnalelor în timp pentru transfer de tip handshaking iniţiat de sursa datelor.
+                </figcaption>
+            </figure>
+        </section>
+
+        <section class="section" id="compulsory">
+            <h2 class="section-title">1. Compulsory Misses (Miss-uri Obligatorii)</h2>
+            
+            <div class="definition-box">
+                <p class="definition-label">Definiție</p>
+                <p class="definition-text">
+                    <strong>Compulsory miss</strong> (sau "cold miss" / "first-reference miss") 
+                    apare atunci când un bloc este accesat pentru <strong>prima dată</strong>. 
+                    Blocul nu poate fi în cache deoarece nu a fost niciodată accesat anterior.
+                </p>
+            </div>
+
+            <div class="info-box info-blue">
+                <p class="info-title">📊 Caracteristici</p>
+                <ul class="content-list">
+                    <li>Inevitabile - apar chiar și cu cache infinit de mare</li>
+                    <li>Depind de dimensiunea working set-ului programului</li>
+                    <li>Apar la pornirea programului sau la intrarea în zone noi de cod/date</li>
+                </ul>
+            </div>
+
+            <h3>Strategii de Reducere:</h3>
+            <ul class="content-list">
+                <li><strong>Prefetching:</strong> Aducerea anticipată a blocurilor în cache</li>
+                <li><strong>Linii de cache mai mari:</strong> Aduc mai multe date odată (exploatează localitatea spațială)</li>
+                <li><strong>Compilatoare optimizate:</strong> Reorganizează accesurile pentru a minimiza prima utilizare</li>
+            </ul>
+            <figure class="figure">
+                <a href="../images/F76.png" target="_blank">
+                    <img src="../images/F76.png" alt="Handshaking inițiat de destinație" class="figure-img medium">
+                </a>
+                <figcaption class="figure-caption">
+                    <strong>Figura 7.6:</strong> Diagrama bloc şi evoluţia semnalelor în timp pentru transfer de tip handshaking iniţiat de destinaţia datelor.
+                </figcaption>
+            </figure>
+        </section>
+
+        <section class="section" id="capacity">
+            <h2 class="section-title">2. Capacity Misses (Miss-uri de Capacitate)</h2>
+            
+            <div class="definition-box">
+                <p class="definition-label">Definiție</p>
+                <p class="definition-text">
+                    <strong>Capacity miss</strong> apare atunci când cache-ul nu poate conține 
+                    toate blocurile necesare pentru a executa programul, și un bloc care va fi 
+                    necesar din nou a fost eliminat pentru a face loc altui bloc.
+                </p>
+            </div>
+
+            <div class="info-box info-blue">
+                <p class="info-title">📊 Caracteristici</p>
+                <ul class="content-list">
+                    <li>Depind de dimensiunea cache-ului relativ la working set</li>
+                    <li>Ar apărea chiar și într-un cache complet asociativ de aceeași dimensiune</li>
+                    <li>Reprezintă "overflow-ul" cache-ului</li>
+                </ul>
+            </div>
+
+            <h3>Strategii de Reducere:</h3>
+            <ul class="content-list">
+                <li><strong>Cache-uri mai mari:</strong> Soluția directă, dar costisitoare</li>
+                <li><strong>Optimizarea codului:</strong> Reducerea working set-ului activ</li>
+                <li><strong>Loop tiling/blocking:</strong> Împărțirea datelor pentru a încăpea în cache</li>
+                <li><strong>Restructurarea datelor:</strong> Eliminarea datelor neutilizate</li>
+            </ul>
+
+            <div class="code-block">
+<pre>// Exemplu: Loop Tiling pentru reducerea capacity misses
+// Înainte (working set mare):
+for (i = 0; i < N; i++)
+    for (j = 0; j < N; j++)
+        C[i][j] = A[i][j] + B[i][j];
+
+// După (working set mai mic la un moment dat):
+for (ii = 0; ii < N; ii += BLOCK)
+    for (jj = 0; jj < N; jj += BLOCK)
+        for (i = ii; i < min(ii+BLOCK, N); i++)
+            for (j = jj; j < min(jj+BLOCK, N); j++)
+                C[i][j] = A[i][j] + B[i][j];</pre>
+            </div>
+        </section>
+
+        <section class="section" id="conflict">
+            <h2 class="section-title">3. Conflict Misses (Miss-uri de Conflict)</h2>
+            
+            <div class="definition-box">
+                <p class="definition-label">Definiție</p>
+                <p class="definition-text">
+                    <strong>Conflict miss</strong> (sau "collision miss") apare în cache-uri cu 
+                    mapare directă sau set-asociativă atunci când mai multe blocuri competesc 
+                    pentru aceeași locație sau set, chiar dacă alte locații din cache sunt libere.
+                </p>
+            </div>
+
+            <div class="info-box info-blue">
+                <p class="info-title">📊 Caracteristici</p>
+                <ul class="content-list">
+                    <li>Nu ar apărea într-un cache complet asociativ de aceeași dimensiune</li>
+                    <li>Cauzate de limitările scheme de mapare</li>
+                    <li>Pot duce la "thrashing" - înlocuire repetată a acelorași blocuri</li>
+                </ul>
+            </div>
+
+            <h3>Strategii de Reducere:</h3>
+            <ul class="content-list">
+                <li><strong>Creșterea asociativității:</strong> De la direct-mapped la N-way</li>
+                <li><strong>Victim cache:</strong> Cache mic complet asociativ pentru blocuri eliminate</li>
+                <li><strong>Reorganizarea datelor:</strong> Padding pentru a evita conflictele</li>
+                <li><strong>Compiler hints:</strong> Alinierea datelor pentru a evita maparea la același set</li>
+            </ul>
+
+            <div class="code-block">
+<pre>// Exemplu: Conflict miss datorat stride-ului
+// Dacă A și B au adrese care se mapează la același set:
+for (i = 0; i < N; i++) {
+    suma += A[i] + B[i];  // A[i] și B[i] se înlocuiesc reciproc!
+}
+
+// Soluție: Padding
+float A[N + PADDING];  // Schimbă alinierea
+float B[N];            // Acum se mapează la seturi diferite</pre>
+            </div>
+        </section>
+
+        <section class="section" id="coherency">
+            <h2 class="section-title">Bonus: Coherency Misses (4th C)</h2>
+            
+            <p class="text-content">
+                În sistemele multiprocesor, există o a patra categorie de miss-uri:
+            </p>
+
+            <div class="definition-box">
+                <p class="definition-label">Definiție</p>
+                <p class="definition-text">
+                    <strong>Coherency miss</strong> apare atunci când un bloc este invalidat 
+                    din cache din cauza unei scrieri de alt procesor în sistemele cu memorie 
+                    partajată. Cunoscut și ca "communication miss" sau "invalidation miss".
+                </p>
+            </div>
+
+            <div class="info-box">
+                <p class="info-title">💡 În Sistemele Multi-Core</p>
+                <p>
+                    Dacă CPU1 modifică variabila X, cache-ul CPU2 care conține X trebuie invalidat 
+                    (protocol MESI/MOESI). Următorul acces al CPU2 la X va fi un coherency miss.
+                </p>
+            </div>
+        </section>
+
+        <section class="section" id="comparatie">
+            <h2 class="section-title">Sumar Comparativ</h2>
+            
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Tip Miss</th>
+                        <th>Cauză</th>
+                        <th>Soluție Principală</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Compulsory</strong></td>
+                        <td>Primul acces la bloc</td>
+                        <td>Prefetching, linii mai mari</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Capacity</strong></td>
+                        <td>Cache prea mic</td>
+                        <td>Cache mai mare, loop tiling</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Conflict</strong></td>
+                        <td>Competiție pentru set/linie</td>
+                        <td>Asociativitate mai mare</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Coherency</strong></td>
+                        <td>Invalidare de alt CPU</td>
+                        <td>Optimizarea partajării</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="card-grid">
+                <div class="info-card">
+                    <div class="card-icon">📈</div>
+                    <h3 class="card-title">Distribuție Tipică</h3>
+                    <p class="card-text">
+                        Pentru aplicații tipice:<br>
+                        • Compulsory: 1-5%<br>
+                        • Capacity: 20-40%<br>
+                        • Conflict: 20-50%<br>
+                        (variază mult cu aplicația)
+                    </p>
+                </div>
+                <div class="info-card">
+                    <div class="card-icon">🎯</div>
+                    <h3 class="card-title">Identificare</h3>
+                    <p class="card-text">
+                        Simulatoare de cache pot clasifica miss-urile comparând cu un cache ideal 
+                        (complet asociativ, infinit) pentru a determina care C contribuie mai mult.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="sumar">
+            <h2 class="section-title">Rezumat</h2>
+            <div class="info-box info-green">
+                <p class="info-title">📝 Puncte Cheie</p>
+                <ul class="content-list">
+                    <li><strong>Compulsory:</strong> Prima referință la un bloc - inevitabil</li>
+                    <li><strong>Capacity:</strong> Working set depășește capacitatea cache-ului</li>
+                    <li><strong>Conflict:</strong> Blocuri care competesc pentru același set</li>
+                    <li><strong>Coherency:</strong> Invalidare în sisteme multiprocesor</li>
+                    <li>Soluții diferite pentru tipuri diferite de miss-uri</li>
+                </ul>
+            </div>
+        </section>
+    </article>
+
+    <script src="../../js/lesson.js"></script>
+</body>
+</html>

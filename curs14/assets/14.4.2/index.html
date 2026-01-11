@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>14.4.2 - Paginare și Segmentare</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/lesson.css">
+</head>
+<body>
+    <article class="lesson-container">
+        <header class="lesson-header">
+            <span class="lesson-badge">Lecția 14.4.2</span>
+            <h1 class="lesson-title">Paginare și Segmentare</h1>
+            <p class="lesson-subtitle">Scheme de organizare a memoriei virtuale</p>
+        </header>
+
+        <section class="section" id="introducere">
+            <h2 class="section-title">Două Abordări</h2>
+            <p class="text-content">
+                Există două scheme principale pentru implementarea memoriei virtuale: 
+                <strong>paginarea</strong> și <strong>segmentarea</strong>. Sistemele moderne 
+                folosesc predominant paginarea sau o combinație a celor două.
+            </p>
+            <figure class="figure">
+                <a href="../images/F77.png" target="_blank">
+                    <img src="../images/F77.png" alt="Arbitrare prin lanț de priorități" class="figure-img medium">
+                </a>
+                <figcaption class="figure-caption">
+                    <strong>Figura 7.7:</strong> Exemplu de arbitrare a cererilor multiple de întrerupere prin lanţ de priorităţi.
+                </figcaption>
+            </figure>
+        </section>
+
+        <section class="section" id="paginare">
+            <h2 class="section-title">Paginare (Paging)</h2>
+            
+            <div class="definition-box">
+                <p class="definition-label">Definiție</p>
+                <p class="definition-text">
+                    <strong>Paginarea</strong> împarte atât spațiul de adrese virtual cât și 
+                    memoria fizică în blocuri de dimensiune fixă (pagini și frame-uri). 
+                    Orice pagină poate fi mapată la orice frame disponibil.
+                </p>
+            </div>
+
+            <h3>Traducerea Adresei</h3>
+            <div class="code-block">
+<pre>Adresă Virtuală (exemplu 32 biți, pagini 4 KB):
+┌───────────────────────┬────────────────┐
+│  Page Number (20 biți)│ Offset (12 biți)│
+└───────────────────────┴────────────────┘
+          │                      │
+          ▼                      │
+    ┌─────────────┐              │
+    │ Page Table  │              │
+    │ ┌─────────┐ │              │
+    │ │ PTE 0   │ │              │
+    │ ├─────────┤ │              │
+    │ │ PTE 1   │ │              │
+    │ ├─────────┤ │              │
+    │ │  ...    │ │              │
+    │ ├─────────┤ │              │
+    │ │ PTE N   │◄├──────────────┘
+    │ └─────────┘ │              
+    └──────┬──────┘              
+           │                     
+           ▼                     
+┌───────────────────────┬────────────────┐
+│  Frame Number (20 biți)│ Offset (12 biți)│
+└───────────────────────┴────────────────┘
+         Adresă Fizică</pre>
+            </div>
+
+            <h3>Structura Page Table Entry (PTE)</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Câmp</th>
+                        <th>Biți</th>
+                        <th>Descriere</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Frame Number</td><td>20+</td><td>Numărul frame-ului fizic</td></tr>
+                    <tr><td>Valid/Present</td><td>1</td><td>1 = pagina e în RAM</td></tr>
+                    <tr><td>Read/Write</td><td>1</td><td>Permisiune de scriere</td></tr>
+                    <tr><td>User/Supervisor</td><td>1</td><td>Accesibil din user mode</td></tr>
+                    <tr><td>Accessed</td><td>1</td><td>Pagina a fost citită</td></tr>
+                    <tr><td>Dirty</td><td>1</td><td>Pagina a fost modificată</td></tr>
+                    <tr><td>NX (No Execute)</td><td>1</td><td>Execuție interzisă</td></tr>
+                </tbody>
+            </table>
+
+            <div class="info-box info-blue">
+                <p class="info-title">💡 Avantajele Paginării</p>
+                <ul class="content-list">
+                    <li>Fără fragmentare externă (toate blocurile au aceeași dimensiune)</li>
+                    <li>Alocare simplă și eficientă</li>
+                    <li>Mapare flexibilă (orice pagină → orice frame)</li>
+                    <li>Partajare ușoară (același frame în mai multe page tables)</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="section" id="multi-nivel">
+            <h2 class="section-title">Page Table Multi-Nivel</h2>
+            
+            <p class="text-content">
+                O problemă cu paginarea simplă: pentru adrese de 64 biți și pagini de 4 KB, 
+                ar fi necesare 2^52 intrări = <strong>36 Petabytes</strong> pentru page table! 
+                Soluția: page tables pe mai multe niveluri.
+            </p>
+
+            <div class="code-block">
+<pre>x86-64: Page Table pe 4 niveluri (48 biți virtuali efectivi)
+┌─────────┬─────────┬─────────┬─────────┬──────────┐
+│ PML4    │ PDPT    │ PD      │ PT      │ Offset   │
+│ (9 biți)│ (9 biți)│ (9 biți)│ (9 biți)│ (12 biți)│
+└────┬────┴────┬────┴────┬────┴────┬────┴────┬─────┘
+     │         │         │         │         │
+     ▼         ▼         ▼         ▼         ▼
+  ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐    ┌──────┐
+  │PML4  │→│PDPT  │→│ PD   │→│ PT   │→   │Frame │
+  │Table │ │Table │ │Table │ │Table │    │      │
+  └──────┘ └──────┘ └──────┘ └──────┘    └──────┘
+
+Fiecare nivel are 512 intrări (2^9)</pre>
+            </div>
+
+            <div class="info-box">
+                <p class="info-title">📊 Beneficiul Multi-Nivel</p>
+                <p>
+                    Tabelele nefolosite nu trebuie alocate. Un proces tipic folosește doar 
+                    o fracțiune mică din spațiul de adrese, deci majoritatea tabelelor 
+                    intermediare nu există.
+                </p>
+            </div>
+        </section>
+
+        <section class="section" id="segmentare">
+            <h2 class="section-title">Segmentare (Segmentation)</h2>
+            
+            <div class="definition-box">
+                <p class="definition-label">Definiție</p>
+                <p class="definition-text">
+                    <strong>Segmentarea</strong> împarte spațiul de adrese în segmente de 
+                    dimensiuni variabile, fiecare reprezentând o unitate logică (cod, date, 
+                    stivă). Segmentele pot crește sau micșora dinamic.
+                </p>
+            </div>
+
+            <div class="code-block">
+<pre>Adresă Segmentată:
+┌─────────────────┬────────────────────────┐
+│ Segment Selector│    Offset în Segment   │
+└────────┬────────┴────────────┬───────────┘
+         │                     │
+         ▼                     │
+   ┌───────────┐               │
+   │ Segment   │               │
+   │ Table     │               │
+   │ ┌───────┐ │               │
+   │ │Base   │ │ + Offset ─────┘
+   │ │Limit  │ │     │
+   │ │Perms  │ │     │
+   │ └───────┘ │     │
+   └───────────┘     │
+         │           │
+         ▼           ▼
+      Adresă Fizică = Base + Offset (dacă Offset < Limit)</pre>
+            </div>
+
+            <h3>Comparație Paginare vs Segmentare</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Aspect</th>
+                        <th>Paginare</th>
+                        <th>Segmentare</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Dimensiune bloc</td><td>Fixă</td><td>Variabilă</td></tr>
+                    <tr><td>Fragmentare externă</td><td>Nu</td><td>Da</td></tr>
+                    <tr><td>Fragmentare internă</td><td>Da (ultima pagină)</td><td>Nu</td></tr>
+                    <tr><td>Vizibilitate</td><td>Transparentă</td><td>Vizibilă programatorului</td></tr>
+                    <tr><td>Unitate logică</td><td>Nu</td><td>Da (cod, date, stivă)</td></tr>
+                    <tr><td>Complexitate</td><td>Simplă</td><td>Complexă</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="section" id="combinat">
+            <h2 class="section-title">Segmentare cu Paginare</h2>
+            
+            <p class="text-content">
+                Unele sisteme (x86 clasic) combină cele două tehnici: segmentele sunt împărțite 
+                în pagini. x86-64 a simplificat acest model, folosind predominant paginare.
+            </p>
+
+            <div class="card-grid">
+                <div class="info-card">
+                    <div class="card-icon">📦</div>
+                    <h3 class="card-title">x86 (32 biți)</h3>
+                    <p class="card-text">
+                        Segmentare + Paginare<br>
+                        Segment → Adresă Liniară → Pagină → Fizică<br>
+                        Complex, rar folosit complet
+                    </p>
+                </div>
+                <div class="info-card">
+                    <div class="card-icon">🚀</div>
+                    <h3 class="card-title">x86-64</h3>
+                    <p class="card-text">
+                        Paginare pe 4 niveluri<br>
+                        Segmentare minimală (flat model)<br>
+                        48 biți virtuali, 52 biți fizici
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="huge-pages">
+            <h2 class="section-title">Huge Pages</h2>
+            
+            <p class="text-content">
+                Pentru aplicații cu working sets mari, paginile standard de 4 KB pot fi ineficiente 
+                (multe intrări în page table, multe TLB miss-uri). <strong>Huge pages</strong> 
+                oferă o soluție:
+            </p>
+
+            <table class="data-table">
+                <tr><td><strong>Standard Page</strong></td><td>4 KB</td></tr>
+                <tr><td><strong>Large Page (x86-64)</strong></td><td>2 MB</td></tr>
+                <tr><td><strong>Huge Page (x86-64)</strong></td><td>1 GB</td></tr>
+            </table>
+
+            <div class="info-box info-blue">
+                <p class="info-title">💡 Beneficii Huge Pages</p>
+                <ul class="content-list">
+                    <li>Mai puține intrări în page table</li>
+                    <li>Mai puține TLB miss-uri (acoperire mai mare per intrare TLB)</li>
+                    <li>Page walks mai scurte (mai puține niveluri)</li>
+                    <li>Utile pentru: baze de date, mașini virtuale, HPC</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="section" id="sumar">
+            <h2 class="section-title">Rezumat</h2>
+            <div class="info-box info-green">
+                <p class="info-title">📝 Puncte Cheie</p>
+                <ul class="content-list">
+                    <li><strong>Paginare:</strong> Blocuri fixe, fără fragmentare externă, dominant azi</li>
+                    <li><strong>Segmentare:</strong> Blocuri variabile, unități logice, mai puțin folosită</li>
+                    <li>Page tables multi-nivel reduc memoria necesară</li>
+                    <li>x86-64 folosește paginare pe 4 niveluri</li>
+                    <li>Huge pages îmbunătățesc performanța pentru working sets mari</li>
+                </ul>
+            </div>
+        </section>
+    </article>
+
+    <script>
+        document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const content = header.nextElementSibling;
+                const isExpanded = content.classList.contains('expanded');
+                header.classList.toggle('active', !isExpanded);
+                content.classList.toggle('expanded', !isExpanded);
+            });
+        });
+    </script>
+    <script src="../../js/lesson.js"></script>
+</body>
+</html>
